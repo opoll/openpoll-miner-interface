@@ -1,0 +1,1 @@
+# openpoll-miner-interface
