@@ -1,0 +1,214 @@
+<div id="pcoded" class="pcoded"
+     [attr.nav-type]="navType"
+     [attr.theme-layout]="themeLayout"
+     [attr.vertical-placement]="verticalPlacement"
+     [attr.vertical-layout]="verticalLayout"
+     [attr.pcoded-device-type]="pcodedDeviceType"
+     [attr.vertical-nav-type]="verticalNavType"
+     [attr.vertical-effect]="verticalEffect"
+     [attr.vnavigation-view]="vnavigationView"
+     [attr.fream-type]="freamType"
+     [attr.sidebar-img]="sidebarImg"
+     [attr.sidebar-img-type]="sidebarImgType"
+     [attr.layout-type]="layoutType"
+     (window:resize)="onResize($event)"
+>
+  <div class="pcoded-overlay-box"></div>
+  <div class="pcoded-container navbar-wrapper">
+    <nav class="navbar header-navbar pcoded-header" [attr.header-theme]="headerTheme" [attr.pcoded-header-position]="pcodedHeaderPosition">
+      <div class="navbar-wrapper">
+        <div class="navbar-logo">
+          <a [routerLink]="['/dashboard/default/']">
+            <img class="img-fluid" src="assets/images/logo.png" alt="Theme-Logo" />
+          </a>
+          <a href="javascript:" class="mobile-options" (click)="toggleHeaderNavRight()">
+            <i class="ti-more"></i>
+          </a>
+        </div>
+        <div class="navbar-container container-fluid">
+          <ul class="nav-left">
+            <li>
+              <div class="sidebar_toggle"><a href="javascript:"><i class="ti-menu"></i></a></div>
+            </li>
+            <li class="header-search">
+              <div id="main-search" class="main-search morphsearch-search">
+                <div class="input-group">
+                  <span class="input-group-addon search-close" (click)="searchOff()"><i class="ti-close"></i></span>
+                  <input class="form-control" [style.width]="searchWidthString">
+                  <span class="input-group-addon search-btn" (click)="searchOn()"><i class="ti-search"></i></span>
+                </div>
+              </div>
+            </li>
+            <li appToggleFullScreen>
+              <a href="javascript:">
+                <i class="ti-fullscreen"></i>
+              </a>
+            </li>
+          </ul>
+          <ul [@mobileHeaderNavRight]="navRight" [ngClass]="navRight" class="nav-right">
+            <li (clickOutside)="notificationOutsideClick('live')" class="header-notification" [ngClass]="liveNotificationClass" (click)="toggleLiveNotification()">
+              <a href="javascript:">
+                <i class="ti-bell"></i>
+                <span class="badge bg-c-pink"></span>
+              </a>
+              <ul [@notificationBottom]="liveNotification" class="show-notification">
+                <li>
+                  <h6>Notifications</h6>
+                  <label class="label label-danger">New</label>
+                </li>
+                <li>
+                  <div class="media">
+                    <img class="d-flex align-self-center img-radius" src="assets/images/avatar-2.jpg" alt="Generic placeholder image">
+                    <div class="media-body">
+                      <h5 class="notification-user">John Doe</h5>
+                      <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                      <span class="notification-time">30 minutes ago</span>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="media">
+                    <img class="d-flex align-self-center img-radius" src="assets/images/avatar-4.jpg" alt="Generic placeholder image">
+                    <div class="media-body">
+                      <h5 class="notification-user">Joseph William</h5>
+                      <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                      <span class="notification-time">30 minutes ago</span>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="media">
+                    <img class="d-flex align-self-center img-radius" src="assets/images/avatar-3.jpg" alt="Generic placeholder image">
+                    <div class="media-body">
+                      <h5 class="notification-user">Sara Soudein</h5>
+                      <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                      <span class="notification-time">30 minutes ago</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li (clickOutside)="notificationOutsideClick('profile')" class="user-profile header-notification" [ngClass]="profileNotificationClass" (click)="toggleProfileNotification()">
+              <a href="javascript:">
+                <img src="assets/images/avatar-4.jpg" class="img-radius" alt="User-Profile-Image">
+                <span>John Doe</span>
+                <i class="ti-angle-down"></i>
+              </a>
+              <ul [@notificationBottom]="profileNotification" class="show-notification profile-notification">
+                <li>
+                  <a href="javascript:">
+                    <i class="ti-settings"></i> Settings
+                  </a>
+                </li>
+                <li>
+                  <a [routerLink]="['/user/profile/']">
+                    <i class="ti-user"></i> Profile
+                  </a>
+                </li>
+                <li>
+                  <a [routerLink]="['/email/inbox/']">
+                    <i class="ti-email"></i> My Messages
+                  </a>
+                </li>
+                <li>
+                  <a [routerLink]="['/authentication/lock-screen/']">
+                    <i class="ti-lock"></i> Lock Screen
+                  </a>
+                </li>
+                <li>
+                  <a [routerLink]="['/authentication/login/']">
+                    <i class="ti-layout-sidebar-left"></i> Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <section class="login header pos-relative d-flex text-center bg-primary common-img-bg">
+      <!-- Container-fluid starts -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <!-- Authentication card start -->
+            <div class="signup-card card-block auth-body mr-auto ml-auto">
+              <form class="md-float-material">
+                <div class="text-center">
+                  <img src="assets/images/logo.png" alt="Gradient Able">
+                </div>
+                <div class="auth-box">
+                  <div class="row m-b-20">
+                    <div class="col-md-12">
+                      <h3 class="text-center txt-primary">Sign up. It is fast and easy.</h3>
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Choose Username">
+                    <span class="md-line"></span>
+                  </div>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Your Email Address">
+                    <span class="md-line"></span>
+                  </div>
+                  <div class="input-group">
+                    <input type="password" class="form-control" placeholder="Choose Password">
+                    <span class="md-line"></span>
+                  </div>
+                  <div class="input-group">
+                    <input type="password" class="form-control" placeholder="Confirm Password">
+                    <span class="md-line"></span>
+                  </div>
+                  <div class="row m-t-25 text-left">
+                    <div class="col-md-12">
+                      <div class="checkbox-fade fade-in-primary">
+                        <label>
+                          <input type="checkbox" value="">
+                          <span class="cr"><i class="cr-icon fa fa-check txt-primary"></i></span>
+                          <span class="text-inverse">I read and accept <a href="javascript:">Terms &amp; Conditions.</a></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="checkbox-fade fade-in-primary">
+                        <label>
+                          <input type="checkbox" value="">
+                          <span class="cr"><i class="cr-icon fa fa-check txt-primary"></i></span>
+                          <span class="text-inverse">Send me the <a href="javascript:">Newsletter</a> weekly.</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row m-t-30">
+                    <div class="col-md-12">
+                      <button type="button" class="btn btn-primary btn-md btn-block waves-effect text-center m-b-20">Sign up now</button>
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-md-10">
+                      <p class="text-inverse text-left m-b-0">Thank you and enjoy our website.</p>
+                      <p class="text-inverse text-left"><b>Your Authentication Team</b></p>
+                    </div>
+                    <div class="col-md-2">
+                      <img src="assets/images/auth/Logo-small-bottom.png" alt="Gradient Able">
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <!-- end of form -->
+            </div>
+            <!-- Authentication card end -->
+          </div>
+          <!-- end of col-sm-12 -->
+        </div>
+        <!-- end of row -->
+      </div>
+      <!-- end of container-fluid -->
+    </section>
+    <div class="footer bg-inverse">
+      <p class="text-center">Copyright &copy; 2017 GRADIENT ABLE ADMIN , All rights reserved.</p>
+    </div>
+  </div>
+</div>

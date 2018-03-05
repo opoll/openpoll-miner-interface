@@ -1,0 +1,219 @@
+<div class="page-body">
+  <div class="row">
+    <!-- student start -->
+    <div class="col-lg-6 col-md-12">
+      <app-card [title]="'Students by Courses'">
+        <div #studentChart>
+          <chart id="student_chart" [type]="'line'" [data]="studentChartData" [options]="studentChartOption"></chart>
+        </div>
+      </app-card>
+    </div>
+    <div class="col-lg-6 col-md-12">
+      <app-card [title]="'Email Campaign'">
+        <chart id="email_chart" [type]="'doughnut'" [data]="emailChartData" [options]="emailChartOption"></chart>
+      </app-card>
+    </div>
+    <!-- student start -->
+
+    <!-- users visite and profile start -->
+    <div class="col-md-12 col-lg-3">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card seo-card">
+            <div class="card-block seo-statustic">
+              <i class="ti-server text-c-green"></i>
+              <h5>65%</h5>
+              <p>Memory Usage</p>
+            </div>
+            <div class="seo-chart" #seoCard1Chart>
+              <chart id="seo-card1" [type]="'line'" [data]="seoCard1Data" [options]="seoCard1Option"></chart>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <div class="card seo-card m-t-30">
+            <div class="card-block seo-statustic">
+              <i class="ti-reload text-c-blue"></i>
+              <h5>$46,845</h5>
+              <p>Revenue</p>
+            </div>
+            <div class="seo-chart" #seoCard2Chart>
+              <chart id="seo-card2" [type]="'line'" [data]="seoCard2Data" [options]="seoCard2Option"></chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-9">
+      <div class="card bg-c-blue map-visitor-card">
+        <div class="card-header">
+          <h5>Unique Visitor</h5>
+        </div>
+        <div class="card-block">
+          <div id="unique-visitor-chart" style="height:350px"></div>
+        </div>
+        <div class="card-footer">
+          <div class="row justify-content-center text-center">
+            <div class="col-auto b-r-default col-6 col-sm-4">
+              <h6>Visits</h6>
+              <p class="text-muted">29.703 Users (40%)</p>
+              <div class="progress">
+                <div class="progress-bar bg-c-blue" style="width:40%"></div>
+              </div>
+            </div>
+            <div class="col-auto col-6 col-sm-4">
+              <h6>Revenue</h6>
+              <p class="text-muted">20703$ (60%)</p>
+              <div class="progress">
+                <div class="progress-bar bg-c-green" style="width:60%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- users visite and profile end -->
+
+    <!-- statustic and process start -->
+    <div class="col-lg-5 col-md-12">
+      <app-card [title]="'Statistics'">
+        <div #statisticsChart >
+          <chart id="statistics_chart" [type]="'line'" [data]="statisticsData" [options]="statisticsOption"></chart>
+        </div>
+      </app-card>
+    </div>
+    <div class="col-lg-7 col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Process Compliance</h5>
+        </div>
+        <div class="card-block">
+          <div class="row">
+            <div class="col-md-4">
+              <p class="f-50 d-inline-block m-t-30 m-b-30">0.4</p>
+              <i class="ti-arrow-down text-c-pink f-26 m-l-5"></i><br>
+              <span class="text-muted">2018 (Jan - Jun)</span>
+              <div class="m-t-30">
+                <a href="javascript:" class="text-underline text-c-blue">Previous Quarters</a>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div #processComplianceChart >
+                <chart id="process_compliance_chart" [type]="'bar'" [data]="processComplianceData" [options]="processComplianceOption"></chart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- statustic and process end -->
+
+    <!-- users statustic start -->
+    <div class="col-lg-4 col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Active user</h5>
+        </div>
+        <div class="card-block">
+          <div #userChart1 >
+            <chart id="user_chart1" [type]="'line'" [data]="userChart1Data" [options]="userChart1Option"></chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Page view</h5>
+        </div>
+        <div class="card-block">
+          <div #userChart2 >
+            <chart id="user_chart2" [type]="'line'" [data]="userChart2Data" [options]="userChart2Option"></chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>New installation</h5>
+        </div>
+        <div class="card-block">
+          <div #userChart3 >
+            <chart id="user_chart3" [type]="'line'" [data]="userChart3Data" [options]="userChart3Option"></chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- users statustic end -->
+
+    <!-- amount-card start -->
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-blue amount-card">
+        <div class="card-block">
+          <i class="ti-arrow-up"></i>
+          <h4>$4600,00</h4>
+        </div>
+        <chart id="amount_card1" [type]="'line'" [data]="amountCardData" [options]="amountCardOption"></chart>
+        <p>Amount Founded</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-green amount-card">
+        <div class="card-block">
+          <i class="ti-arrow-down"></i>
+          <h4>$387.00</h4>
+        </div>
+        <chart id="amount_card2" [type]="'line'" [data]="amountCardData" [options]="amountCardOption"></chart>
+        <p>Balance</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-yellow amount-card">
+        <div class="card-block">
+          <i class="ti-arrow-up"></i>
+          <h4>$8350.00</h4>
+        </div>
+        <chart id="amount_card3" [type]="'line'" [data]="amountCardData" [options]="amountCardOption"></chart>
+        <p>Payback Amount</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-pink amount-card">
+        <div class="card-block">
+          <i class="ti-arrow-down"></i>
+          <h4>$123.00</h4>
+        </div>
+        <chart id="amount_card4" [type]="'line'" [data]="amountCardData" [options]="amountCardOption"></chart>
+        <p>Planned Collection Income</p>
+      </div>
+    </div>
+    <!-- amount-card end -->
+
+    <div class="col-lg-4 col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Customer Feedback</h5>
+        </div>
+        <div class="card-block">
+          <span class="d-block text-c-blue f-24 f-w-600 text-center">365247</span>
+          <div #feedbackChart>
+            <chart id="feedback_chart" [type]="'doughnut'" [data]="feedbackData" [options]="feedbackOption"></chart>
+          </div>
+          <div class="row justify-content-center m-t-15">
+            <div class="col-auto b-r-default m-t-5 m-b-5">
+              <h4>83%</h4>
+              <p class="text-success m-b-0"><i class="ti-hand-point-up m-r-5"></i>Positive</p>
+            </div>
+            <div class="col-auto m-t-5 m-b-5">
+              <h4>17%</h4>
+              <p class="text-danger m-b-0"><i class="ti-hand-point-down m-r-5"></i>Negative</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- activity feed end -->
+
+  </div>
+</div>
