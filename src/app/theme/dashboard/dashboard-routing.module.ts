@@ -10,16 +10,8 @@ const routes: Routes = [
     },
     children: [
       {
-        path: 'default',
+        path: '',
         loadChildren: './default/default.module#DefaultModule'
-      },
-      {
-        path: 'ecommerce',
-        loadChildren: './ecommerce/ecommerce.module#EcommerceModule'
-      },
-      {
-        path: 'analytics',
-        loadChildren: './analytics/analytics.module#AnalyticsModule'
       }
     ]
   }
