@@ -15,7 +15,7 @@
   >
   <div class="pcoded-overlay-box"></div>
   <div class="pcoded-container navbar-wrapper">
-    <nav class="navbar header-navbar pcoded-header" [attr.header-theme]="headerTheme" [attr.pcoded-header-position]="pcodedHeaderPosition">
+    <nav class="navbar header-navbar pcoded-header" header-theme="theme3" [attr.pcoded-header-position]="pcodedHeaderPosition">
       <div class="navbar-wrapper">
         <div class="navbar-logo">
           <a class="mobile-menu" id="mobile-collapse" href="javascript:" (click)="toggleOpened()" [exclude]="'#main_navbar'" (clickOutside)="onClickedOutsideSidebar($event)">
@@ -32,15 +32,6 @@
           <ul class="nav-left">
             <li>
               <div class="sidebar_toggle"><a href="javascript:"><i class="ti-menu"></i></a></div>
-            </li>
-            <li class="header-search">
-              <div id="main-search" class="main-search morphsearch-search">
-                <div class="input-group">
-                  <span class="input-group-addon search-close" (click)="searchOff()"><i class="ti-close"></i></span>
-                  <input class="form-control" [style.width]="searchWidthString">
-                  <span class="input-group-addon search-btn" (click)="searchOn()"><i class="ti-search"></i></span>
-                </div>
-              </div>
             </li>
             <li appToggleFullScreen>
               <a href="javascript:">
@@ -61,73 +52,33 @@
                 </li>
                 <li>
                   <div class="media">
-                    <img class="d-flex align-self-center img-radius" src="assets/images/avatar-2.jpg" alt="Generic placeholder image">
+                    <img class="d-flex align-self-center img-radius" src="assets/images/shard.png" alt="Generic placeholder image">
                     <div class="media-body">
-                      <h5 class="notification-user">John Doe</h5>
-                      <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                      <h5 class="notification-user">Shard 0x23af69fa526bbf12372e</h5>
+                      <p class="notification-msg">Stale response pool. Force fetch or turn on response auto-fetching.</p>
                       <span class="notification-time">30 minutes ago</span>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="media">
-                    <img class="d-flex align-self-center img-radius" src="assets/images/avatar-4.jpg" alt="Generic placeholder image">
+                    <img class="d-flex align-self-center img-radius" src="assets/images/mainchain.png" alt="Generic placeholder image">
                     <div class="media-body">
-                      <h5 class="notification-user">Joseph William</h5>
-                      <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                      <h5 class="notification-user">Mainchain Notification</h5>
+                      <p class="notification-msg">Mainchain mempool fully updated 23m ago.</p>
                       <span class="notification-time">30 minutes ago</span>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="media">
-                    <img class="d-flex align-self-center img-radius" src="assets/images/avatar-3.jpg" alt="Generic placeholder image">
+                    <img class="d-flex align-self-center img-radius" src="assets/images/shard.png" alt="Generic placeholder image">
                     <div class="media-body">
-                      <h5 class="notification-user">Sara Soudein</h5>
-                      <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                      <h5 class="notification-user">Shard 0xfa526bbf123af69fa23</h5>
+                      <p class="notification-msg">Block mined! Broadcasting block to network.</p>
                       <span class="notification-time">30 minutes ago</span>
                     </div>
                   </div>
-                </li>
-              </ul>
-            </li>
-            <li class="">
-              <a href="javascript:" (click)="toggleChat()">
-                <i class="ti-comments"></i>
-                <span class="badge bg-c-green"></span>
-              </a>
-            </li>
-            <li (clickOutside)="notificationOutsideClick('profile')" class="user-profile header-notification" [ngClass]="profileNotificationClass" (click)="toggleProfileNotification()">
-              <a href="javascript:">
-                <img src="assets/images/avatar-4.jpg" class="img-radius" alt="User-Profile-Image">
-                <span>John Doe</span>
-                <i class="ti-angle-down"></i>
-              </a>
-              <ul [@notificationBottom]="profileNotification" class="show-notification profile-notification">
-                <li>
-                  <a href="javascript:">
-                    <i class="ti-settings"></i> Settings
-                  </a>
-                </li>
-                <li>
-                  <a [routerLink]="['/user/profile/']">
-                    <i class="ti-user"></i> Profile
-                  </a>
-                </li>
-                <li>
-                  <a [routerLink]="['/email/inbox/']">
-                    <i class="ti-email"></i> My Messages
-                  </a>
-                </li>
-                <li>
-                  <a [routerLink]="['/authentication/lock-screen/']">
-                    <i class="ti-lock"></i> Lock Screen
-                  </a>
-                </li>
-                <li>
-                  <a [routerLink]="['/authentication/login/']">
-                    <i class="ti-layout-sidebar-left"></i> Logout
-                  </a>
                 </li>
               </ul>
             </li>

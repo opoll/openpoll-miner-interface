@@ -1,6 +1,6 @@
 {
-  "name": "gradient-able-v1.7.0",
-  "version": "0.0.0",
+  "name": "openpoll-mining-interface",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

@@ -7,7 +7,7 @@ import {NavigationEnd, Router} from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'Gradient Able 5+';
+  title = 'OpenPoll Mining GUI';
 
   constructor(private router: Router) { }
 
