@@ -6,8 +6,8 @@
       <div class="card bg-c-blue order-card">
         <div class="card-block">
           <h6 class="m-b-20"># of Shards Being Mined</h6>
-          <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/shard.png" width="100" height="100"><span>12</span></h2>
-          <p class="m-b-0">Total Avaliable Shards<span class="f-right">150</span></p>
+          <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/shard.png" width="100" height="100"><span>{{shardsBeingMined}}</span></h2>
+          <p class="m-b-0">Total Avaliable Shards<span class="f-right">{{totalShardsAvaliable}}</span></p>
         </div>
       </div>
     </div>
@@ -15,8 +15,8 @@
       <div class="card bg-c-green order-card">
         <div class="card-block">
           <h6 class="m-b-20">Total Blocks Found</h6>
-          <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/block.png" width="100" height="100"><span>23</span></h2>
-          <p class="m-b-0">Total Imported<span class="f-right">100</span></p>
+          <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/block.png" width="100" height="100"><span>{{totalBlocksFound}}</span></h2>
+          <p class="m-b-0">Total Imported<span class="f-right">{{totalBlocksImported}}</span></p>
         </div>
       </div>
     </div>
@@ -33,9 +33,9 @@
       <div class="card bg-c-yellow order-card">
         <div class="card-block">
           <h6 class="m-b-20">Statuses</h6>
-          <p class="m-b-0">Active<span class="f-right">2</span></p>
-          <p class="m-b-0">Paused<span class="f-right">1</span></p>
-          <p class="m-b-0">Failed<span class="f-right">0</span></p>
+          <p class="m-b-0">Active<span class="f-right">{{totalActive}}</span></p>
+          <p class="m-b-0">Paused<span class="f-right">{{totalPaused}}</span></p>
+          <p class="m-b-0">Failed<span class="f-right">{{totalFailed}}</span></p>
         </div>
       </div>
     </div>
@@ -54,29 +54,17 @@
                       <tr>
                         <th>Chain Type</th>
                         <th>ID</th>
+                        <th>Height</th>
                         <th>Last Updated</th>
                         <th>Status</th>
                         <th>Actions</th>
                       </tr>
-                      <tr>
-                        <td><img src="assets/images/mainchain.png" alt="prod img" class="img-fluid" width="50" height="50"></td>
-                        <td>main</td>
-                        <td>05-01-2017</td>
-                        <td><span class="label label-warning">Paused</span></td>
-                        <td><span class="label label-success">Start</span> <span class="label label-warning">Pause</span> <span class="label label-danger">Delete</span></td>
-                      </tr>
-                      <tr>
-                        <td><img src="assets/images/shard.png" alt="prod img" class="img-fluid" width="50" height="50"></td>
-                        <td>0x23af69fa526bbf12372e</td>
-                        <td>04-01-2017</td>
-                        <td><span class="label label-success">Active</span></td>
-                        <td><span class="label label-success">Start</span> <span class="label label-warning">Pause</span> <span class="label label-danger">Delete</span></td>
-                      </tr>
-                      <tr>
-                        <td><img src="assets/images/shard.png" alt="prod img" class="img-fluid" width="50" height="50"></td>
-                        <td>0xfa526bbf123af69fa23</td>
-                        <td>03-01-2017</td>
-                        <td><span class="label label-success">Active</span></td>
+                      <tr *ngFor="let entry of chainEntries">
+                        <td><img src="assets/images/{{entry.type}}.png" class="img-fluid" width="50" height="50"></td>
+                        <td>{{entry.id}}</td>
+                        <td>{{entry.height}}</td>
+                        <td>{{entry.lastUpdated}}</td>
+                        <td><span [ngClass]="{'label': true, 'label-success': entry.status == 'Active', 'label-warning': entry.status == 'Paused', 'label-danger': entry.status == 'Failed'}">{{entry.status}}</span></td>
                         <td><span class="label label-success">Start</span> <span class="label label-warning">Pause</span> <span class="label label-danger">Delete</span></td>
                       </tr>
                     </table>
