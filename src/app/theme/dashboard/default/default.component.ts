@@ -63,23 +63,68 @@ export class DefaultComponent implements OnInit, AfterViewInit {
       },
       {
         type: 'shard',
-        id: '0x23af69fa526bbf12372e',
+        id: '0x74324d303857b5779bca422f211b6d75',
         height: 14,
         lastUpdated: '02-24-2018',
         status: 'Active'
       },
       {
         type: 'shard',
-        id: '0xfa526bbf123af69fa23',
+        id: '0x3871612dc2bf2add6de545b950701933',
         height: 24,
         lastUpdated: '03-01-2018',
         status: 'Active'
+      },
+      {
+        type: 'shard',
+        id: '0xf8324e74713c0d65a2a025d9a744b58f',
+        height: 14,
+        lastUpdated: '03-23-2018',
+        status: 'Failed'
+      },
+      {
+        type: 'shard',
+        id: '0x489c3f18c6c4de7b799c3cc000d3d670',
+        height: 21,
+        lastUpdated: '04-24-2018',
+        status: 'Paused'
+      },
+      {
+        type: 'shard',
+        id: '0xbb155c1642c33ec1358cb23f7ea312a7',
+        height: 40,
+        lastUpdated: '02-02-2018',
+        status: 'Active'
+      },
+      {
+        type: 'shard',
+        id: '0x0990f688ae97f026d2aacf1f6caacc97',
+        height: 49,
+        lastUpdated: '02-21-2018',
+        status: 'Active'
+      },
+      {
+        type: 'shard',
+        id: '0x1e176a44ebb3be6a21f68a0de9d17d8c',
+        height: 33,
+        lastUpdated: '02-29-2018',
+        status: 'Active'
+      },
+      {
+        type: 'shard',
+        id: '0xfb308a4a53707fa4da4e694466d88888',
+        height: 8,
+        lastUpdated: '02-21-2018',
+        status: 'Failed'
       }
     ]
 
-    this.totalActive = 2;
-    this.totalPaused = 1;
-    this.totalFailed = 0;
+    // Fetch chain statuses
+    const statuses = getStatusesFromChainEntries(this.chainEntries);
+
+    this.totalActive = statuses.active;
+    this.totalPaused = statuses.paused;
+    this.totalFailed = statuses.failed;
   }
 
   ngOnInit() {
@@ -90,8 +135,41 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+
   }
 
+  startShard(shardId){
+
+  }
+
+  pauseShard(shardId){
+    
+  }
+
+  deleteShard(shardId){
+    
+  }
+
+}
+
+function getStatusesFromChainEntries(chainEntries){
+  let active = 0;
+  let paused = 0;
+  let failed = 0;
+
+  chainEntries.forEach(function(entry) {
+    if(entry.status.toLowerCase() === 'active'){
+      active++;
+    } else if(entry.status.toLowerCase() === 'paused'){
+      paused++;
+    } else if(entry.status.toLowerCase() === 'failed'){
+      failed++;
+    }
+  });
+
+  return {
+    active, paused, failed
+  }
 }
 
 function e(h, g, i) {
