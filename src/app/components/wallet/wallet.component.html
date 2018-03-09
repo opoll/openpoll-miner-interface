@@ -1,3 +1,63 @@
-<p>
-  wallet works!
-</p>
+<div class="page-body">
+  <div class="row">
+    <!-- Wallet Cards Start -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card bg-c-pink order-card">
+          <div class="card-block">
+            <h6 class="m-b-20">Total Balance</h6>
+            <h2 class="text-right"><img class="d-flex align-self-center img-fluid" src="assets/images/earnings.png" width="100" height="100"><span>{{balance}} POL</span></h2>
+            <h6 class="m-b-0">Converted To Dollars<span class="f-right">${{balanceInDollars}}</span></h6>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+          <div class="card bg-c-blue order-card">
+            <div class="card-block">
+              <h6 class="m-b-20"># of Wallets</h6>
+              <h2 class="text-right"><img class="d-flex align-self-center img-fluid" src="assets/images/wallet1.png" width="100" height="100"><span>{{totalWallets}}</span></h2>
+              <h6 class="m-b-0"><span class="label label-warning">Export All Wallets</span></h6>
+            </div>
+          </div>
+        </div>
+    <!-- Wallet Cards End -->
+
+    <!-- Wallets Table Start -->
+    <div class="col-sm-12">
+        <app-card [cardClass]="'tab-card'" [cardOptionBlock]="true">
+          <div class="md-tabs">
+            <ngb-tabset>
+              <ngb-tab title="Wallets">
+                <ng-template ngbTabContent>
+                  <div [@fadeInOutTranslate] class="m-t-15">
+                    <div class="table-responsive">
+                      <table class="table">
+                        <tr>
+                          <th></th>
+                          <th>ID</th>
+                          <th># of Addresses</th>
+                          <th>Addresses</th>
+                          <th>Wallet Balance</th>
+                          <th>Actions</th>
+                        </tr>
+                        <tr *ngFor="let wallet of wallets">
+                          <td><img src="assets/images/wallet.png" class="img-fluid" width="30" height="30"></td>
+                          <td>{{wallet.id}}</td>
+                          <td>{{wallet.addresses.length}}</td>
+                          <td>
+                            <span *ngFor="let address of wallet.addresses">{{address}}<br /></span>
+                          </td>
+                          <td><h5>{{wallet.balance}} POL</h5></td>
+                          <td><span class="label label-warning">Export Keys</span> <span class="label label-danger">Delete</span></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-tab>
+            </ngb-tabset>
+          </div>
+        </app-card>
+      </div>
+    <!-- Wallets Table End -->
+  </div>
+</div>
