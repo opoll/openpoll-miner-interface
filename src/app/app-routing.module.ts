@@ -20,11 +20,11 @@ const routes: Routes = [
       },
       {
         path: 'wallet',
-        component: WalletComponent
+        loadChildren: './components/wallet/wallet.module#WalletModule'
       },
       {
         path: 'settings',
-        component: SettingsComponent
+        loadChildren: './components/settings/settings.module#SettingsModule'
       }
     ]
   }

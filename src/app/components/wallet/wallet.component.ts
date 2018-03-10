@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-wallet',
@@ -14,7 +15,7 @@ export class WalletComponent implements OnInit {
   // Wallet table data
   wallets: Wallet[];
 
-  constructor() {
+  constructor(private dataService: DataService) {
     // Wallets
     this.wallets = [
       {
