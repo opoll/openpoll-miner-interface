@@ -38,28 +38,35 @@
               <ngb-tab title="Wallets">
                 <ng-template ngbTabContent>
                   <div [@fadeInOutTranslate] class="m-t-15">
-                    <div class="table-responsive">
-                      <table class="table">
-                        <tr>
-                          <th></th>
-                          <th>ID</th>
-                          <th># of Addresses</th>
-                          <th>Addresses</th>
-                          <th>Wallet Balance</th>
-                          <th>Actions</th>
-                        </tr>
-                        <tr *ngFor="let wallet of wallets">
-                          <td><img src="assets/images/wallet.png" class="img-fluid" width="30" height="30"></td>
-                          <td>{{wallet.id}}</td>
-                          <td>{{wallet.addresses.length}}</td>
-                          <td>
-                            <span *ngFor="let address of wallet.addresses">{{address}}<br /></span>
-                          </td>
-                          <td><h6>{{wallet.balance}} POL</h6></td>
-                          <td><span class="label label-primary">Export Keys</span> <span class="label label-danger">Delete</span></td>
-                        </tr>
-                      </table>
-                    </div>
+                    <ng-template [ngIf]="wallets.length === 0">
+                        <h3 class="text-center mt-5 mb-3">You Have No Wallets. Generate One Below.</h3>
+                    </ng-template>
+                    <ng-template [ngIf]="wallets.length !== 0">
+                      <div class="table-responsive">
+                        <table class="table">
+                          <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th># of Addresses</th>
+                            <th>Addresses</th>
+                            <th>Wallet Balance</th>
+                            <th>Actions</th>
+                          </tr>
+                          
+                              <tr *ngFor="let wallet of wallets">
+                                  <td><img src="assets/images/wallet.png" class="img-fluid" width="30" height="30"></td>
+                                  <td>{{wallet.id}}</td>
+                                  <td>{{wallet.addresses.length}}</td>
+                                  <td>
+                                    <span *ngFor="let address of wallet.addresses">{{address}}<br /></span>
+                                  </td>
+                                  <td><h6>{{wallet.balance}} POL</h6></td>
+                                  <td><span class="label label-primary">Export Keys</span> <span class="label label-danger">Delete</span></td>
+                              </tr>
+                          
+                        </table>
+                      </div>
+                    </ng-template>
                   </div>
                 </ng-template>
               </ngb-tab>
@@ -102,7 +109,7 @@
               <h3>Generate A Wallet</h3>
               <img src="assets/images/wallet.png" class="img-fluid" width="100" height="100">
               <h4 class="m-t-20">You currently have <span class="text-c-green">{{wallets.length}}</span> wallet(s)</h4>
-              <p class="m-b-20">Enter the password for the new wallet.</p>
+              <p class="m-b-20">Enter a password for a new wallet.</p>
               <input type="password" class="form-control m-b-20 m-t-20" placeholder="Wallet Password">
               <input type="password" class="form-control m-b-20 m-t-20" placeholder="Confirm Wallet Password">
               <button class="btn btn-primary btn-sm btn-round">Generate Wallet</button>

@@ -34,7 +34,6 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   };
 
   // View variables that will be dynamically updated
-  shardsBeingMined: number;
   totalShardsAvaliable: number;
   totalBlocksFound: number;
   totalBlocksImported: number;
@@ -48,7 +47,6 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   chainEntries:ChainEntry[];
 
   constructor(private servicePNotify: NotificationsService, private dataService: DataService) {
-    this.shardsBeingMined = 13;
     this.totalShardsAvaliable = 150;
     this.totalBlocksFound = 23;
     this.totalBlocksImported = 100;
