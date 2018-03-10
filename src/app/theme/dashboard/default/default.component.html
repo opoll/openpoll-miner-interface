@@ -53,13 +53,13 @@
                             <th>Status</th>
                             <th>Actions</th>
                           </tr>
-                          <tr *ngFor="let entry of chainEntries">
+                          <tr *ngFor="let entry of chainEntries;">
                             <td><img src="assets/images/{{entry.type}}.png" class="img-fluid" width="50" height="50"></td>
                             <td>{{entry.id}}</td>
                             <td>{{entry.height}}</td>
                             <td>{{entry.lastUpdated}}</td>
                             <td><span [ngClass]="{'label': true, 'label-success': entry.status == 'Active', 'label-warning': entry.status == 'Paused', 'label-danger': entry.status == 'Failed'}">{{entry.status}}</span></td>
-                            <td><span class="label label-success">Start</span> <span class="label label-warning">Pause</span> <span class="label label-danger">Delete</span></td>
+                            <td><span class="label label-success" (click)="startShard(entry.id)">Start</span> <span class="label label-warning" (click)="pauseShard(entry.id)">Pause</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
                           </tr>
                         </table>
                       </div>

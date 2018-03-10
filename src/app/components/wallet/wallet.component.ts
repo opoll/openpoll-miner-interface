@@ -54,6 +54,30 @@ export class WalletComponent implements OnInit {
 
   }
 
+  generateWallet(password, confirmPassword){
+    console.log("Request to generate a wallet with password " + password + ". Confirm password is " + confirmPassword);
+  }
+
+  generateWalletAddress(walletId){
+    console.log("Request to generate an additional address for wallet " + walletId);
+  }
+
+  exportWalletKeys(walletId){
+    console.log("Request to export wallet keys for wallet " + walletId);
+  }
+
+  exportAllWallets(){
+    console.log("Request to export all wallets.");
+  }
+
+  initiateWithdrawl(){
+    console.log("Request to withdraw funds.");
+  }
+
+  deleteWallet(walletId){
+    console.log("Request to export delete wallet " + walletId);
+  }
+
 }
 
 function getSumOfAllWallets(wallets){
