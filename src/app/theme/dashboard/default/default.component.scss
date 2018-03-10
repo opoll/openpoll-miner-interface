@@ -1,0 +1,9 @@
+#seo-card1 canvas,
+#seo-card2 canvas {
+  height: 150px !important;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  @media only screen and (max-width: 768px) {
+    padding-bottom: 30px;
+  }
+}

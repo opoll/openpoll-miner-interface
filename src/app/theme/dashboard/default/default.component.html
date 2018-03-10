@@ -1,0 +1,76 @@
+<div class="page-body">
+  <div class="row">
+    <!-- order-card start -->
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-blue order-card">
+        <div class="card-block">
+          <h6 class="m-b-20"># of Shards Being Mined</h6>
+          <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/shard.png" width="100" height="100"><span>{{chainEntries.length}}</span></h2>
+          <p class="m-b-0">Total Avaliable Shards<span class="f-right">{{totalShardsAvaliable}}</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-green order-card">
+        <div class="card-block">
+          <h6 class="m-b-20">Total Blocks Found</h6>
+          <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/block.png" width="100" height="100"><span>{{totalBlocksFound}}</span></h2>
+          <p class="m-b-0">Total Imported<span class="f-right">{{totalBlocksImported}}</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-yellow order-card">
+        <div class="card-block">
+          <h6 class="m-b-20">Statuses</h6>
+          <h4 class="m-b-0">Active<span class="f-right">{{totalActive}}</span></h4>
+          <h4 class="m-b-0">Paused<span class="f-right">{{totalPaused}}</span></h4>
+          <h4 class="m-b-0">Failed<span class="f-right">{{totalFailed}}</span></h4>
+        </div>
+      </div>
+    </div>
+    <!-- order-card end -->
+
+    <!-- tabs card start -->
+    <div class="col-sm-12">
+      <app-card [cardClass]="'tab-card'" [cardOptionBlock]="true">
+        <div class="md-tabs">
+          <ngb-tabset>
+            <ngb-tab title="Activity">
+              <ng-template ngbTabContent>
+                <div [@fadeInOutTranslate] class="m-t-15">
+                  <ng-template [ngIf]="chainEntries.length === 0">
+                      <h3 class="text-center mt-5 mb-3">You Aren't Working On Any Chains. Fetch A Shard To Work On Below.</h3>
+                  </ng-template>
+                  <ng-template [ngIf]="chainEntries.length !== 0">
+                    <div class="table-responsive">
+                        <table class="table">
+                          <tr>
+                            <th>Chain Type</th>
+                            <th>ID</th>
+                            <th>Height</th>
+                            <th>Last Updated</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                          <tr *ngFor="let entry of chainEntries">
+                            <td><img src="assets/images/{{entry.type}}.png" class="img-fluid" width="50" height="50"></td>
+                            <td>{{entry.id}}</td>
+                            <td>{{entry.height}}</td>
+                            <td>{{entry.lastUpdated}}</td>
+                            <td><span [ngClass]="{'label': true, 'label-success': entry.status == 'Active', 'label-warning': entry.status == 'Paused', 'label-danger': entry.status == 'Failed'}">{{entry.status}}</span></td>
+                            <td><span class="label label-success">Start</span> <span class="label label-warning">Pause</span> <span class="label label-danger">Delete</span></td>
+                          </tr>
+                        </table>
+                      </div>
+                  </ng-template>
+                </div>
+              </ng-template>
+            </ngb-tab>
+          </ngb-tabset>
+        </div>
+      </app-card>
+    </div>
+    <!-- tabs card end -->
+  </div>
+</div>
