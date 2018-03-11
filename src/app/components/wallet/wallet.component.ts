@@ -41,6 +41,14 @@ export class WalletComponent implements OnInit {
           '96e7bbe0934446d708293f73d24ca45c'
         ],
         balance: 930
+      },
+      {
+        id: 'e81bcf8-02d6-afea-1006-f9f02b76f',
+        addresses: [
+          '9edc1d079f29a6e42f8edf18d56876fe',
+          'e6b3e05f375567ef4d4b5aa5150fc265'
+        ],
+        balance: 0
       }
     ]
 
@@ -52,6 +60,40 @@ export class WalletComponent implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  generateWallet(password, confirmPassword){
+    console.log("Request to generate a wallet with password " + password + ". Confirm password is " + confirmPassword);
+  }
+
+  generateWalletAddress(walletId){
+    console.log("Request to generate an additional address for wallet " + walletId);
+  }
+
+  exportWalletKeys(walletId){
+    console.log("Request to export wallet keys for wallet " + walletId);
+  }
+
+  exportAllWallets(wallets){
+    console.log("Request to export wallet(s)");
+    wallets.forEach(function(wallet) {
+      console.log(wallet.id);
+    });
+  }
+
+  withdrawFromWallets(wallets){
+    console.log("Request to withdraw funds for wallet(s)");
+    wallets.forEach(function(wallet) {
+      console.log(wallet.id);
+    });
+  }
+
+  withdrawFromWallet(walletId){
+    console.log("Request to withdraw funds for wallet " + walletId);
+  }
+
+  deleteWallet(walletId){
+    console.log("Request to delete wallet " + walletId);
   }
 
 }

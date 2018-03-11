@@ -15,16 +15,16 @@
           <div class="card-block">
             <h6 class="m-b-20"># of Wallets</h6>
             <h2 class="text-right"><img class="d-flex align-self-center img-fluid" src="assets/images/wallet1.png" width="100" height="100"><span>{{totalWallets}}</span></h2>
-            <h6 class="m-b-0"><span class="label label-warning">Export All Wallets</span></h6>
+            <h6 class="m-b-0"><span class="label label-warning" (click)="exportAllWallets(wallets)">Export All Wallets</span></h6>
           </div>
         </div>
     </div>
     <div class="col-md-6 col-xl-3">
         <div class="card order-card">
           <div class="card-block">
-            <h6 class="m-b-20 text-muted">Initiate Payout</h6>
+            <h6 class="m-b-20 text-muted">Withdraw All Funds</h6>
             <h2 class="text-right m-t-20 m-b-20"><img class="d-flex align-self-center img-fluid" src="assets/images/payout.png" width="100" height="100"></h2>
-            <h6 class="m-t-20"><span class="label label-success">Initiate Withdrawal</span></h6>
+            <h6 class="m-t-20"><span class="label label-success" (click)="withdrawFromWallets(wallets)">Initiate Payout</span></h6>
           </div>
         </div>
     </div>
@@ -52,18 +52,21 @@
                             <th>Wallet Balance</th>
                             <th>Actions</th>
                           </tr>
-                          
-                              <tr *ngFor="let wallet of wallets">
-                                  <td><img src="assets/images/wallet.png" class="img-fluid" width="30" height="30"></td>
-                                  <td>{{wallet.id}}</td>
-                                  <td>{{wallet.addresses.length}}</td>
-                                  <td>
-                                    <span *ngFor="let address of wallet.addresses">{{address}}<br /></span>
-                                  </td>
-                                  <td><h6>{{wallet.balance}} POL</h6></td>
-                                  <td><span class="label label-primary">Export Keys</span> <span class="label label-danger">Delete</span></td>
-                              </tr>
-                          
+                          <tr *ngFor="let wallet of wallets">
+                              <td><img src="assets/images/wallet.png" class="img-fluid" width="30" height="30"></td>
+                              <td>{{wallet.id}}</td>
+                              <td>{{wallet.addresses.length}}</td>
+                              <td>
+                                <span *ngFor="let address of wallet.addresses">{{address}}<br /></span>
+                              </td>
+                              <td><h6>{{wallet.balance}} POL</h6></td>
+                              <div *ngIf="wallet.balance > 0">
+                                <td><span class="label label-success" (click)="withdrawFromWallet(wallet.id)">Withdraw Funds</span> <span class="label label-primary" (click)="exportWalletKeys(wallet.id)">Export Keys</span> <span class="label label-danger" (click)="deleteWallet(wallet.id)">Delete</span></td>
+                              </div>
+                              <div *ngIf="wallet.balance === 0">
+                                <td><span class="label label-primary" (click)="exportWalletKeys(wallet.id)">Export Keys</span> <span class="label label-danger" (click)="deleteWallet(wallet.id)">Delete</span></td>
+                              </div>
+                          </tr>
                         </table>
                       </div>
                     </ng-template>
@@ -110,9 +113,9 @@
               <img src="assets/images/wallet.png" class="img-fluid" width="100" height="100">
               <h4 class="m-t-20">You currently have <span class="text-c-green">{{wallets.length}}</span> wallet(s)</h4>
               <p class="m-b-20">Enter a password for a new wallet.</p>
-              <input type="password" class="form-control m-b-20 m-t-20" placeholder="Wallet Password">
-              <input type="password" class="form-control m-b-20 m-t-20" placeholder="Confirm Wallet Password">
-              <button class="btn btn-primary btn-sm btn-round">Generate Wallet</button>
+              <input type="password" class="form-control m-b-20 m-t-20" placeholder="Wallet Password" #password>
+              <input type="password" class="form-control m-b-20 m-t-20" placeholder="Confirm Wallet Password" #confirmPassword>
+              <button class="btn btn-primary btn-sm btn-round" (click)="generateWallet(password.value, confirmPassword.value)">Generate Wallet</button>
             </div>
         </div>
     </div>
@@ -122,8 +125,8 @@
               <h3>Generate An Address</h3>
               <img src="assets/images/address.png" class="img-fluid" width="75" height="75">
               <p class="m-b-20 m-t-20">Enter the Wallet ID</p>
-              <input type="text" class="form-control m-b-20 m-t-20" placeholder="Ex: a6ffed9-4252-427e-af7d-3dcaaf2db2df">
-              <button class="btn btn-danger btn-sm btn-round">Generate Address</button>
+              <input type="text" class="form-control m-b-20 m-t-20" placeholder="Ex: a6ffed9-4252-427e-af7d-3dcaaf2db2df" #walletId>
+              <button class="btn btn-danger btn-sm btn-round" (click)="generateWalletAddress(walletId.value)">Generate Address</button>
             </div>
         </div>
     </div>
@@ -133,7 +136,7 @@
               <h3>Export Wallets</h3>
               <img src="assets/images/export.png" class="img-fluid" width="75" height="75">
               <h4 class="m-t-20 text-c-yellow">Export Your wallet(s)</h4>
-              <button class="btn btn-warning btn-sm btn-round m-t-5">Export All Wallets</button>
+              <button class="btn btn-warning btn-sm btn-round m-t-5" (click)="exportAllWallets(wallets)">Export All Wallets</button>
             </div>
         </div>
     </div>

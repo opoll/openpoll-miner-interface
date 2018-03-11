@@ -15,6 +15,7 @@
 .classpath
 .vscode
 .c9/
+.vscode
 *.launch
 .settings/
 *.sublime-workspace

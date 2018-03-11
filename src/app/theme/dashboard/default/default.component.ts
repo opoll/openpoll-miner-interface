@@ -137,15 +137,19 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   }
 
   startShard(shardId){
-
+    console.log("Request to start shard " + shardId);
   }
 
   pauseShard(shardId){
-    
+    console.log("Request to pause shard " + shardId);
   }
 
   deleteShard(shardId){
-    
+    console.log("Request to delete shard " + shardId);
+  }
+
+  reviveShard(shardId){
+    console.log("Request to revive shard " + shardId);
   }
 
 }
