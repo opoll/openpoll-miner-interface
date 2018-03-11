@@ -148,6 +148,10 @@ export class DefaultComponent implements OnInit, AfterViewInit {
     console.log("Request to delete shard " + shardId);
   }
 
+  reviveShard(shardId){
+    console.log("Request to revive shard " + shardId);
+  }
+
 }
 
 function getStatusesFromChainEntries(chainEntries){
