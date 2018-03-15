@@ -2,14 +2,30 @@
   <div class="row">
     <!-- order-card start -->
     <div class="col-md-6 col-xl-3">
-      <div class="card bg-c-blue order-card">
+      <div class="card bg-c-grey order-card">
         <div class="card-block">
-          <h6 class="m-b-20"># of Shards Being Mined</h6>
-          <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/shard.png" width="100" height="100"><span>{{chainEntries.length}}</span></h2>
-          <p class="m-b-0">Other Avaliable Shards<span class="f-right">{{totalShardsAvaliable}}</span></p>
+          <h6 class="m-b-20 text-muted">Miner Type</h6>
+          <h2 class="text-right text-muted"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/pick.png" width="100" height="100"><span>{{minerType}}</span></h2>
+          <ng-template [ngIf]="minerType == 'Shard'">
+              <p class="m-b-0 text-muted"><span class="label label-danger" (click)="switchMinerType()">Convert To Mainchain</span></p>
+          </ng-template>
+          <ng-template [ngIf]="minerType == 'Mainchain'">
+              <p class="m-b-0 text-muted"><span class="label label-danger" (click)="switchMinerType()">Convert To Shard</span></p>
+          </ng-template>
         </div>
       </div>
     </div>
+    <ng-template [ngIf]="minerType == 'Shard'">
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-c-blue order-card">
+          <div class="card-block">
+            <h6 class="m-b-20"># of Shards Being Mined</h6>
+            <h2 class="text-right"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/shard.png" width="100" height="100"><span>{{chainEntries.length}}</span></h2>
+            <p class="m-b-0">Other Avaliable Shards<span class="f-right">{{totalShardsAvaliable}}</span></p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
     <div class="col-md-6 col-xl-3">
       <div class="card bg-c-green order-card">
         <div class="card-block">
@@ -25,17 +41,19 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6 col-xl-3">
-      <div class="card bg-c-yellow order-card">
-        <div class="card-block">
-          <h6 class="m-b-20">Statuses</h6>
-          <h4 class="m-b-0">Active<span class="f-right">{{totalActive}}</span></h4>
-          <h4 class="m-b-0">Paused<span class="f-right">{{totalPaused}}</span></h4>
-          <h4 class="m-b-0">Awaiting Responses<span class="f-right">{{totalAwaitingResponses}}</span></h4>
-          <h4 class="m-b-0">Failed<span class="f-right">{{totalFailed}}</span></h4>
+    <ng-template [ngIf]="minerType == 'Shard'">
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-c-yellow order-card">
+          <div class="card-block">
+            <h6 class="m-b-20">Statuses</h6>
+            <h4 class="m-b-0">Active<span class="f-right">{{totalActive}}</span></h4>
+            <h4 class="m-b-0">Paused<span class="f-right">{{totalPaused}}</span></h4>
+            <h4 class="m-b-0">Awaiting Responses<span class="f-right">{{totalAwaitingResponses}}</span></h4>
+            <h4 class="m-b-0">Failed<span class="f-right">{{totalFailed}}</span></h4>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-template>
     <!-- order-card end -->
 
     <!-- tabs card start -->
@@ -43,48 +61,9 @@
       <app-card [cardClass]="'tab-card'" [cardOptionBlock]="true">
         <div class="md-tabs">
           <ngb-tabset>
-            <ngb-tab title="Polls You Are Mining">
-              <ng-template ngbTabContent>
-                <ng-template [ngIf]="chainEntries.length === 0">
-                    <h3 class="text-center mt-5 mb-3">You Aren't Working On Any Chains. Fetch A Shard To Work On Below.</h3>
-                </ng-template>
-                <ng-template [ngIf]="chainEntries.length !== 0">
-                  <div class="table-responsive">
-                      <table class="table">
-                        <tr>
-                          <th>Chain Type</th>
-                          <th>ID</th>
-                          <th>Height</th>
-                          <th>Last Updated</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                        <tr *ngFor="let entry of chainEntries;">
-                          <td><img src="assets/images/{{entry.type}}.png" class="img-fluid" width="50" height="50"></td>
-                          <td>{{entry.id}}</td>
-                          <td>{{entry.height}}</td>
-                          <td>{{entry.lastUpdated}}</td>
-                          <td><span [ngClass]="{'label': true, 'label-success': entry.status == 'Active', 'label-warning': entry.status == 'Paused',
-                            'label-primary': entry.status == 'Awaiting Responses', 'label-danger': entry.status == 'Failed'}">{{entry.status}}</span></td>
-                          <div *ngIf="entry.status === 'Active'">
-                              <td><span class="label label-warning" (click)="pauseShard(entry.id)">Pause</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
-                          </div>
-                          <div *ngIf="entry.status === 'Paused'">
-                              <td><span class="label label-success" (click)="startShard(entry.id)">Start</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
-                          </div>
-                          <div *ngIf="entry.status === 'Awaiting Responses'">
-                              <td><span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
-                          </div>
-                          <div *ngIf="entry.status === 'Failed'">
-                              <td><span class="label label-primary" (click)="reviveShard(entry.id)">Revive</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
-                          </div>
-                        </tr>
-                      </table>
-                    </div>
-                </ng-template>
-              </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Available Polls">
+            <!-- Start Shard Specific Tab Layout -->
+            <ng-template [ngIf]="minerType == 'Shard'">
+              <ngb-tab title="Polls You Are Mining">
                 <ng-template ngbTabContent>
                   <ng-template [ngIf]="chainEntries.length === 0">
                       <h3 class="text-center mt-5 mb-3">You Aren't Working On Any Chains. Fetch A Shard To Work On Below.</h3>
@@ -94,24 +73,100 @@
                         <table class="table">
                           <tr>
                             <th></th>
-                            <th>Poll Hash</th>
-                            <th>Number of Miners</th>
-                            <th>Difficulty</th>
-                            <th>Poll Name</th>
+                            <th>ID</th>
+                            <th>Height</th>
+                            <th>Last Updated</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                           </tr>
-                          <tr *ngFor="let shardInfo of avaliableShards;">
-                            <td><img src="assets/images/poll.png" class="img-fluid" width="50" height="50"></td>
-                            <td>{{shardInfo.pollHash}}</td>
-                            <td>{{shardInfo.numMiners}}</td>
-                            <td>{{shardInfo.difficulty}}</td>
-                            <td>{{shardInfo.pollName}}</td>
-                            <td><span class="label label-primary" (click)="importShard(shardInfo.pollHash)">Import Shard</span></td>
+                          <tr *ngFor="let entry of chainEntries;">
+                            <td><img src="assets/images/shard.png" class="img-fluid" width="50" height="50"></td>
+                            <td>{{entry.id}}</td>
+                            <td>{{entry.height}}</td>
+                            <td>{{entry.lastUpdated}}</td>
+                            <td><span [ngClass]="{'label': true, 'label-success': entry.status == 'Active', 'label-warning': entry.status == 'Paused',
+                              'label-primary': entry.status == 'Awaiting Responses', 'label-danger': entry.status == 'Failed'}">{{entry.status}}</span></td>
+                            <div *ngIf="entry.status === 'Active'">
+                                <td><span class="label label-warning" (click)="pauseShard(entry.id)">Pause</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                            </div>
+                            <div *ngIf="entry.status === 'Paused'">
+                                <td><span class="label label-success" (click)="startShard(entry.id)">Start</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                            </div>
+                            <div *ngIf="entry.status === 'Awaiting Responses'">
+                                <td><span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                            </div>
+                            <div *ngIf="entry.status === 'Failed'">
+                                <td><span class="label label-primary" (click)="reviveShard(entry.id)">Revive</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                            </div>
                           </tr>
                         </table>
                       </div>
                   </ng-template>
                 </ng-template>
               </ngb-tab>
+              <ngb-tab title="Available Polls">
+                  <ng-template ngbTabContent>
+                    <ng-template [ngIf]="chainEntries.length === 0">
+                        <h3 class="text-center mt-5 mb-3">You Aren't Working On Any Chains. Fetch A Shard To Work On Below.</h3>
+                    </ng-template>
+                    <ng-template [ngIf]="chainEntries.length !== 0">
+                      <div class="table-responsive">
+                          <table class="table">
+                            <tr>
+                              <th></th>
+                              <th>Poll Hash</th>
+                              <th>Number of Miners</th>
+                              <th>Difficulty</th>
+                              <th>Poll Name</th>
+                            </tr>
+                            <tr *ngFor="let shardInfo of avaliableShards;">
+                              <td><img src="assets/images/poll.png" class="img-fluid" width="50" height="50"></td>
+                              <td>{{shardInfo.pollHash}}</td>
+                              <td>{{shardInfo.numMiners}}</td>
+                              <td>{{shardInfo.difficulty}}</td>
+                              <td>{{shardInfo.pollName}}</td>
+                              <td><span class="label label-primary" (click)="importShard(shardInfo.pollHash)">Import Shard</span></td>
+                            </tr>
+                          </table>
+                        </div>
+                    </ng-template>
+                  </ng-template>
+                </ngb-tab>
+            </ng-template> <!-- End Shard Specific Tab Layout -->
+            <!-- Start Mainchain Specific Tab Layout -->
+            <ng-template [ngIf]="minerType === 'Mainchain'">
+              <ngb-tab title="Activity">
+                <ng-template ngbTabContent>
+                  <div class="table-responsive">
+                      <table class="table">
+                        <tr>
+                          <th></th>
+                          <th>Height</th>
+                          <th>Last Updated</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                        <tr>
+                          <td><img src="assets/images/mainchain.png" class="img-fluid" width="50" height="50"></td>
+                          <td>{{mainchainInfo.height}}</td>
+                          <td>{{mainchainInfo.lastUpdated}}</td>
+                          <td><span [ngClass]="{'label': true, 'label-success': mainchainInfo.status == 'Active', 'label-warning': mainchainInfo.status == 'Paused',
+                            'label-danger': mainchainInfo.status == 'Failed'}">{{mainchainInfo.status}}</span></td>
+                          <div *ngIf="mainchainInfo.status === 'Active'">
+                              <td><span class="label label-warning" (click)="pauseShard(mainchainInfo.id)">Pause</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                          </div>
+                          <div *ngIf="mainchainInfo.status === 'Paused'">
+                              <td><span class="label label-success" (click)="startShard(mainchainInfo.id)">Start</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                          </div>
+                          <div *ngIf="mainchainInfo.status === 'Failed'">
+                              <td><span class="label label-primary" (click)="reviveShard(mainchainInfo.id)">Revive</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                          </div>
+                        </tr>
+                      </table>
+                    </div>
+                </ng-template>
+              </ngb-tab>
+            </ng-template> <!-- End Mainchain Specific Tab Layout -->
           </ngb-tabset>
         </div>
       </app-card>
