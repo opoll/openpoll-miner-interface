@@ -35,36 +35,31 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 
   // View variables that will be dynamically updated
   totalShardsAvaliable: number;
-  totalBlocksFound: number;
-  totalBlocksImported: number;
+  hashrate: number;
+  netAvgHashrate: number;
 
   // Statues
   totalActive: number;
   totalPaused: number;
+  totalAwaitingResponses: number;
   totalFailed: number;
 
   // Table information on held chains and what is being worked on
   chainEntries:ChainEntry[];
+  avaliableShards:ShardInfo[];
 
   constructor(private servicePNotify: NotificationsService, private dataService: DataService) {
-    this.totalShardsAvaliable = 150;
-    this.totalBlocksFound = 23;
-    this.totalBlocksImported = 100;
+    this.hashrate = 11;
+    this.netAvgHashrate = 8;
 
+    // The shards that this miner is working on
     this.chainEntries = [
-      {
-        type: 'mainchain',
-        id: 'main',
-        height: 403,
-        lastUpdated: '02-31-2018',
-        status: 'Paused'
-      },
       {
         type: 'shard',
         id: '0x74324d303857b5779bca422f211b6d75',
         height: 14,
         lastUpdated: '02-24-2018',
-        status: 'Active'
+        status: 'Awaiting Responses'
       },
       {
         type: 'shard',
@@ -106,7 +101,7 @@ export class DefaultComponent implements OnInit, AfterViewInit {
         id: '0x1e176a44ebb3be6a21f68a0de9d17d8c',
         height: 33,
         lastUpdated: '02-29-2018',
-        status: 'Active'
+        status: 'Awaiting Responses'
       },
       {
         type: 'shard',
@@ -117,12 +112,31 @@ export class DefaultComponent implements OnInit, AfterViewInit {
       }
     ]
 
+    // Data on avaliable shards that this miner can work on
+    this.avaliableShards = [
+      {
+        pollHash: '0xfb308a4asdffs07fa4da4asdffs6d88888',
+        numMiners: 5,
+        difficulty: 2,
+        pollName: '2018 National Forest Conservation Survey'
+      },
+      {
+        pollHash: '0xb9ce7e0f5dfd7c4b7649832d8cbb7149d67',
+        numMiners: 8,
+        difficulty: 3,
+        pollName: 'New University of Maryland North Campus Diner Poll'
+      }
+    ]
+
     // Fetch chain statuses
     const statuses = getStatusesFromChainEntries(this.chainEntries);
 
     this.totalActive = statuses.active;
     this.totalPaused = statuses.paused;
+    this.totalAwaitingResponses = statuses.awaitingResponses;
     this.totalFailed = statuses.failed;
+
+    this.totalShardsAvaliable = this.avaliableShards.length;
   }
 
   ngOnInit() {
@@ -134,6 +148,10 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
 
+  }
+
+  importShard(shardId){
+    console.log("Request to import shard " + shardId);
   }
 
   startShard(shardId){
@@ -157,20 +175,28 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 function getStatusesFromChainEntries(chainEntries){
   let active = 0;
   let paused = 0;
+  let awaitingResponses = 0;
   let failed = 0;
 
   chainEntries.forEach(function(entry) {
-    if(entry.status.toLowerCase() === 'active'){
-      active++;
-    } else if(entry.status.toLowerCase() === 'paused'){
-      paused++;
-    } else if(entry.status.toLowerCase() === 'failed'){
-      failed++;
+    switch(entry.status.toLowerCase()){
+      case 'active':
+        active++;
+        break;
+      case 'paused':
+        paused++;
+        break;
+      case 'awaiting responses':
+        awaitingResponses++;
+        break;
+      case 'failed':
+        failed++;
+        break;
     }
   });
 
   return {
-    active, paused, failed
+    active, paused, awaitingResponses, failed
   }
 }
 
@@ -222,11 +248,19 @@ function f() {
   };
 }
 
-// Interface defining the each table row of chain information
+// Interface defining each table row of chain information
 interface ChainEntry{
-    type:string, // 'shard' or 'mainchain' (corresponds to png image names)
-    id:string, // id of the chain. If it is the mainchain id is 'main'. If it is a shard it will look like this '0x23af69fa526bbf12372e'
-    height:number, // height of the blockchain
+    type: string, // 'shard' or 'mainchain' (corresponds to png image names)
+    id: string, // id of the chain. If it is the mainchain id is 'main'. If it is a shard it will look like this '0x23af69fa526bbf12372e'
+    height: number, // height of the blockchain
     lastUpdated: string, // date this chain entry was last updated
     status: string// 'active', 'paused', or 'failed'
+}
+
+// Interface defining each table row of information of shards that can be imported
+interface ShardInfo{
+  pollHash: string,
+  numMiners: number,
+  difficulty: number,
+  pollName: string
 }

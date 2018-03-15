@@ -10,7 +10,7 @@ export class DataService {
   }
 
   // getChainData(){
-  //   return this.http.get('../data/shards.json')
+  //   return this.http.get(url)
   //     .map(res => res.json());
   // }
 
