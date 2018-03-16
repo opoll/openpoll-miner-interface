@@ -10,6 +10,9 @@ import {SharedModule} from './shared/shared.module';
 import {MenuItems} from './shared/menu-items/menu-items';
 import {BreadcrumbsComponent} from './layout/admin/breadcrumbs/breadcrumbs.component';
 
+import { DataService } from './services/data.service';
+import { HttpModule } from '@angular/http';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,9 +23,10 @@ import {BreadcrumbsComponent} from './layout/admin/breadcrumbs/breadcrumbs.compo
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    SharedModule
+    SharedModule,
+    HttpModule,
   ],
-  providers: [MenuItems],
+  providers: [MenuItems, DataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

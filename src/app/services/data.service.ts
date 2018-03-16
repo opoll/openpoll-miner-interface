@@ -9,9 +9,10 @@ export class DataService {
     console.log('data service connected');
   }
 
-  // getChainData(){
-  //   return this.http.get(url)
-  //     .map(res => res.json());
-  // }
+  // Initially pull nodeType and adminAuthToken
+  getAdminInfo(){
+    return this.http.get('http://localhost:9011/admin/info')
+      .map(res => res.json());
+  }
 
 }
