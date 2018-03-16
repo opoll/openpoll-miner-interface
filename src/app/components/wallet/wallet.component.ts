@@ -33,17 +33,26 @@ export class WalletComponent implements OnInit {
   }
 
   generateWallet(password, confirmPassword){
-    console.log("Request to generate a wallet with password " + password + ". Confirm password is " + confirmPassword);
+    // First check to make sure password and confirmPassword match
+
+    // Execute request to add wallet using provided password
+    this.dataService.addWallet(password, this.token).subscribe((data) => {
+      // Add the returned wallet to the view if wallet creation is successful
+      console.dir(data.wallet);
+    });
   }
 
   exportWalletKeys(walletId){
-    console.log("Request to export wallet keys for wallet " + walletId);
+    this.dataService.getWalletKeys(walletId, this.token).subscribe((data) => {
+      // Download the keys as an arbitrary file type of choice
+      console.dir(data.keys);
+    });
   }
 
   exportAllWallets(){
-    console.log("Request to export wallet(s)");
-    this.wallets.forEach(function(wallet) {
-      console.log(wallet.id);
+    this.dataService.exportWallets(this.token).subscribe((data) => {
+      // Download the wallets as an arbitrary file type of choice
+      console.dir(data.wallets);
     });
   }
 
@@ -59,7 +68,10 @@ export class WalletComponent implements OnInit {
   }
 
   deleteWallet(walletId){
-    console.log("Request to delete wallet " + walletId);
+    this.dataService.deleteWallet(walletId, this.token).subscribe((data) => {
+      // Tell user status of delete
+      console.dir(data.deletionStatus);
+    });
   }
 
 }

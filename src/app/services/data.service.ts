@@ -59,10 +59,36 @@ export class DataService {
   wallet component with */
   getWalletsInfo(token){
     const httpOptions = this.getAuthHttpOptions(token);
-    return this.http.get('http://localhost:9011/admin/wallets', httpOptions)
-      .map(res => res.json());
+    return this.get('/admin/wallets', httpOptions);
   }
 
+  /* Retrieves the public-private keypair for the provided walletId */
+  getWalletKeys(walletId, token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get(`/admin/wallets/${walletId}/event?action=exportKeys`, httpOptions);
+  }
+
+  /* Deletes the wallet with the specified walletId */
+  deleteWallet(walletId, token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.delete(`/admin/wallets/${walletId}`, httpOptions);
+  }
+
+  /* Exports all of the wallets the miner holds */
+  exportWallets(token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get(`/admin/wallets/event?action=exportWallets`, httpOptions);
+  }
+
+  /* Creates a new wallet with one address from password passed in. Response is
+  general info on the new wallet that was created to populate the view with */
+  addWallet(password, token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    const data = {
+      'password': password
+    }
+    return this.post(`/admin/wallets`, data, httpOptions);
+  }
   /***************************************************************/
   /*               End Miner Wallet Admin Requests               */
   /***************************************************************/
@@ -70,7 +96,7 @@ export class DataService {
 
 
 
-  
+
   /********************        Helpers        ********************/
 
   // Returns RequestOptions object configured with proper Authorization header
@@ -87,6 +113,22 @@ export class DataService {
     httpOptions.headers = headers;
 
     return httpOptions;
+  }
+
+  // Generic requests taking an endpoint url and httpOptions
+  get(endpoint, httpOptions){
+    return this.http.get(`http://localhost:9011${endpoint}`, httpOptions)
+      .map(res => res.json());
+  }
+
+  post(endpoint, data, httpOptions){
+    return this.http.post(`http://localhost:9011${endpoint}`, data, httpOptions)
+    .map(res => res.json());
+  }
+
+  delete(endpoint, httpOptions){
+    return this.http.delete(`http://localhost:9011${endpoint}`, httpOptions)
+        .map(res => res.json());
   }
 
   /*****************        End Helpers        ******************/
