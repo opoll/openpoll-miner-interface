@@ -10,6 +10,8 @@ import { DataService } from './services/data.service';
 })
 export class AppComponent implements OnInit {
   title: string;
+
+  // Admin Meta Info For Use In Children Components
   adminAuthToken: string;
   nodeType: string;
 
@@ -26,9 +28,11 @@ export class AppComponent implements OnInit {
       window.scrollTo(0, 0);
     });
 
-    // Pull admin auth token and nodeType from miner
+    /* Pull admin auth token and nodeType from miner and set as app variable
+    child components can later pull and use */
     this.dataService.getAdminInfo().subscribe((info) => {
-      console.log(info.adminAuthToken, info.nodeType)
+      this.adminAuthToken = info.adminAuthToken;
+      this.nodeType = info.nodeType;
     });
   }
 }

@@ -7,6 +7,9 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./wallet.component.scss']
 })
 export class WalletComponent implements OnInit {
+  // Token
+  token = 'NjhiNDY4NjA0ZTY3NWUxMWU3YWIzYzA5YzU1YmQyNDdiNjNiMTk2ZmQ3Yzg5ODNhYTM3NWY1ZmM0MzI1M2MzMTsxNy44LjI0My4xNDA7OTAxMQ==';
+
   // Card data
   balance: number;
   balanceInDollars: number;
@@ -15,34 +18,18 @@ export class WalletComponent implements OnInit {
   // Wallet table data
   wallets: Wallet[];
 
-  constructor(private dataService: DataService) {
-    // Wallets
-    this.wallets = [
-      {
-        id: 'a6ffed9-4252-427e-af7d-3dcaaf2db2df',
-        address: 'mwVb4SJUxAoKmj3B1eQmxoEHJXY7v8izPk',
-        balance: 265
-      },
-      {
-        id: 'da492b1-c744-9bbe-d10e-cd871a65fac',
-        address: 'e293e42b3bd765fad06c1ae258ca1405',
-        balance: 930
-      },
-      {
-        id: 'e81bcf8-02d6-afea-1006-f9f02b76f',
-        address: '9edc1d079f29a6e42f8edf18d56876fe',
-        balance: 0
-      }
-    ]
-
-    // Get balance data
-    this.balance = getSumOfAllWallets(this.wallets);
-    this.balanceInDollars = convertPOLtoUSD(this.balance);
-    this.totalWallets = this.wallets.length;
-  }
+  constructor(private dataService: DataService) {}
 
   ngOnInit() {
+    // Fetch wallets
+    this.dataService.getWalletsInfo(this.token).subscribe((data) => {
+      this.wallets = data.wallets;
 
+      // Calculate balance data and populate other variables
+      this.balance = getSumOfAllWallets(this.wallets);
+      this.balanceInDollars = convertPOLtoUSD(this.balance);
+      this.totalWallets = this.wallets.length;
+    });
   }
 
   generateWallet(password, confirmPassword){
