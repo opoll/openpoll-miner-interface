@@ -11,6 +11,7 @@ import {MenuItems} from './shared/menu-items/menu-items';
 import {BreadcrumbsComponent} from './layout/admin/breadcrumbs/breadcrumbs.component';
 
 import { DataService } from './services/data.service';
+import { TokenService } from './services/token.service';
 import { HttpModule } from '@angular/http';
 
 @NgModule({
@@ -26,7 +27,7 @@ import { HttpModule } from '@angular/http';
     SharedModule,
     HttpModule,
   ],
-  providers: [MenuItems, DataService],
+  providers: [MenuItems, DataService, TokenService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

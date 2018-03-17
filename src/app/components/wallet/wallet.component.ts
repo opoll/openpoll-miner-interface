@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
+import { TokenService } from '../../services/token.service';
 
 @Component({
   selector: 'app-wallet',
@@ -8,7 +9,7 @@ import { DataService } from '../../services/data.service';
 })
 export class WalletComponent implements OnInit {
   // Token
-  token = 'NjhiNDY4NjA0ZTY3NWUxMWU3YWIzYzA5YzU1YmQyNDdiNjNiMTk2ZmQ3Yzg5ODNhYTM3NWY1ZmM0MzI1M2MzMTsxNy44LjI0My4xNDA7OTAxMQ==';
+  token: string;
 
   // Card data
   balance: number;
@@ -18,9 +19,14 @@ export class WalletComponent implements OnInit {
   // Wallet table data
   wallets: Wallet[];
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService, private tokenService: TokenService) {}
 
   ngOnInit() {
+    // Subscribe to observable admin auth token
+    this.tokenService.adminAuthToken.subscribe(adminAuthToken => {
+      this.token = adminAuthToken;
+    });
+
     // Fetch wallets
     this.dataService.getWalletsInfo(this.token).subscribe((data) => {
       this.wallets = data.wallets;

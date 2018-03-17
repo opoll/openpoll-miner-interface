@@ -1,8 +1,9 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, Input,} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 
 import {NotificationsService} from 'angular2-notifications';
 import { DataService } from '../../../services/data.service';
+import { TokenService } from '../../../services/token.service';
 
 @Component({
   selector: 'app-default',
@@ -33,11 +34,11 @@ export class DefaultComponent implements OnInit, AfterViewInit {
     position: ['bottom', 'right'],
   };
 
-  // Token
-  token = 'NjhiNDY4NjA0ZTY3NWUxMWU3YWIzYzA5YzU1YmQyNDdiNjNiMTk2ZmQ3Yzg5ODNhYTM3NWY1ZmM0MzI1M2MzMTsxNy44LjI0My4xNDA7OTAxMQ==';
+  // token + minerType
+  token:string;
+  minerType: string;
 
   // View variables that will be dynamically updated
-  minerType: string;
   totalShardsAvaliable: number;
   hashrate: number;
   netAvgHashrate: number;
@@ -53,10 +54,20 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   chainEntries:ShardEntry[];
   avaliableShards:ShardInfo[];
 
-  constructor(private servicePNotify: NotificationsService, private dataService: DataService) {}
+  constructor(private servicePNotify: NotificationsService, private dataService: DataService, private tokenService: TokenService) {}
 
   ngOnInit() {
-    this.minerType = "Shard";
+    // Subscribe to observable admin auth token
+    this.tokenService.adminAuthToken.subscribe(adminAuthToken => {
+      this.token = adminAuthToken;
+    });
+
+    // Subscribe to observable minerType info
+    this.tokenService.minerType.subscribe(minerType => {
+      this.minerType = minerType;
+    });
+
+
     this.hashrate = 11;
     this.netAvgHashrate = 8;
     
