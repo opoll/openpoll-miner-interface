@@ -24,7 +24,30 @@ export class DataService {
   /*                  Shard Miner Admin Requests                  */
   /****************************************************************/
 
+  /* Returns general information on the shards the miner is working on to
+  populate the interface with*/
+  getShardsInfo(token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get('/admin/chains/shards', httpOptions);
+  }
 
+  /* Starts mining on shard */
+  startShard(shardId, token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get(`/admin/chains/shards/${shardId}/event?action=start`, httpOptions);
+  }
+
+  /* Pauses mining on a shard */
+  pauseShard(shardId, token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get(`/admin/chains/shards/${shardId}/event?action=pause`, httpOptions);
+  }
+
+  /* Deletes a shard and wipes it from miner's db */
+  deleteShard(shardId, token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.delete(`/admin/chains/shards/${shardId}`, httpOptions);
+  }
 
   /****************************************************************/
   /*                End Shard Miner Admin Requests                */
@@ -39,7 +62,28 @@ export class DataService {
   /*                Mainchain Miner Admin Requests                */
   /****************************************************************/
 
+  getMainchainInfo(token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get('/admin/chains/mainchain', httpOptions);
+  }
 
+  /* Starts mining on mainchain */
+  startMainchain(token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get(`/admin/chains/mainchain/event?action=start`, httpOptions);
+  }
+
+  /* Pauses mining on mainchain */
+  pauseMainchain(token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.get(`/admin/chains/mainchain/event?action=pause`, httpOptions);
+  }
+
+  /* Delete mainchain and wipe chain data from db */
+  deleteMainchain(token){
+    const httpOptions = this.getAuthHttpOptions(token);
+    return this.delete(`/admin/chains/mainchain`, httpOptions);
+  }
 
   /****************************************************************/
   /*              End Mainchain Miner Admin Requests              */

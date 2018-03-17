@@ -33,6 +33,9 @@ export class DefaultComponent implements OnInit, AfterViewInit {
     position: ['bottom', 'right'],
   };
 
+  // Token
+  token = 'NjhiNDY4NjA0ZTY3NWUxMWU3YWIzYzA5YzU1YmQyNDdiNjNiMTk2ZmQ3Yzg5ODNhYTM3NWY1ZmM0MzI1M2MzMTsxNy44LjI0My4xNDA7OTAxMQ==';
+
   // View variables that will be dynamically updated
   minerType: string;
   totalShardsAvaliable: number;
@@ -50,139 +53,124 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   chainEntries:ShardEntry[];
   avaliableShards:ShardInfo[];
 
-  constructor(private servicePNotify: NotificationsService, private dataService: DataService) {
+  constructor(private servicePNotify: NotificationsService, private dataService: DataService) {}
+
+  ngOnInit() {
     this.minerType = "Shard";
     this.hashrate = 11;
     this.netAvgHashrate = 8;
-
+    
     // The shards that this miner is working on
     if(this.minerType == "Shard"){
-      this.chainEntries = [
-        {
-          id: '0x74324d303857b5779bca422f211b6d75',
-          height: 14,
-          respPoolSize: 0,
-          lastUpdated: '02-24-2018',
-          status: 'Awaiting Responses'
-        },
-        {
-          id: '0x3871612dc2bf2add6de545b950701933',
-          height: 24,
-          respPoolSize: 32,
-          lastUpdated: '03-01-2018',
-          status: 'Active'
-        },
-        {
-          id: '0xf8324e74713c0d65a2a025d9a744b58f',
-          height: 14,
-          respPoolSize: 12,
-          lastUpdated: '03-23-2018',
-          status: 'Failed'
-        },
-        {
-          id: '0x489c3f18c6c4de7b799c3cc000d3d670',
-          height: 21,
-          respPoolSize: 9,
-          lastUpdated: '04-24-2018',
-          status: 'Paused'
-        },
-        {
-          id: '0xbb155c1642c33ec1358cb23f7ea312a7',
-          height: 40,
-          respPoolSize: 94,
-          lastUpdated: '02-02-2018',
-          status: 'Active'
-        },
-        {
-          id: '0x0990f688ae97f026d2aacf1f6caacc97',
-          height: 49,
-          respPoolSize: 53,
-          lastUpdated: '02-21-2018',
-          status: 'Active'
-        },
-        {
-          id: '0x1e176a44ebb3be6a21f68a0de9d17d8c',
-          height: 33,
-          respPoolSize: 0,
-          lastUpdated: '02-29-2018',
-          status: 'Awaiting Responses'
-        },
-        {
-          id: '0xfb308a4a53707fa4da4e694466d88888',
-          height: 8,
-          respPoolSize: 74,
-          lastUpdated: '02-21-2018',
-          status: 'Failed'
-        }
-      ]
-      sortByStatus(this.chainEntries);
+      this.dataService.getShardsInfo(this.token).subscribe((data) => {
+        // Populate chainEntries
+        this.chainEntries = data.shardEntries;
+        sortByStatus(this.chainEntries);
 
-      // Data on avaliable shards that this miner can work on
-      this.avaliableShards = [
-        {
-          pollHash: '0xfb308a4asdffs07fa4da4asdffs6d88888',
-          numMiners: 5,
-          difficulty: 2,
-          pollName: '2018 National Forest Conservation Survey'
-        },
-        {
-          pollHash: '0xb9ce7e0f5dfd7c4b7649832d8cbb7149d67',
-          numMiners: 8,
-          difficulty: 3,
-          pollName: 'New University of Maryland North Campus Diner Poll'
-        }
-      ]
+        // Data on avaliable shards that this miner can work on
+        this.avaliableShards = [
+          {
+            pollHash: '0xfb308a4asdffs07fa4da4asdffs6d88888',
+            numMiners: 5,
+            difficulty: 2,
+            pollName: '2018 National Forest Conservation Survey'
+          },
+          {
+            pollHash: '0xb9ce7e0f5dfd7c4b7649832d8cbb7149d67',
+            numMiners: 8,
+            difficulty: 3,
+            pollName: 'New University of Maryland North Campus Diner Poll'
+          }
+        ];
 
-      // Fetch chain statuses
-      const statuses = getStatusesFromChainEntries(this.chainEntries);
+        // Fetch chain statuses
+        const statuses = getStatusesFromChainEntries(this.chainEntries);
 
-      this.totalActive = statuses.active;
-      this.totalPaused = statuses.paused;
-      this.totalAwaitingResponses = statuses.awaitingResponses;
-      this.totalFailed = statuses.failed;
+        this.totalActive = statuses.active;
+        this.totalPaused = statuses.paused;
+        this.totalAwaitingResponses = statuses.awaitingResponses;
+        this.totalFailed = statuses.failed;
 
-      this.totalShardsAvaliable = this.avaliableShards.length;
+        this.totalShardsAvaliable = this.avaliableShards.length;
+
+      });
 
     } else if (this.minerType == 'Mainchain'){
-      this.mainchainInfo = {
-        height: 302,
-        lastUpdated: '03-15-2018',
-        status: 'Paused'
-      }
+      this.dataService.getMainchainInfo(this.token).subscribe((data) => {
+        this.mainchainInfo = data.mainchainEntry;
+      });
+
     }
 
-  }
-
-  ngOnInit() {
-    // Fetch data to populate component with using data service
-    // this.dataService.getChainData().subscribe((data) => {
-    //   console.log(data);
-    // })
-  }
+  } // End ngOnInit()
 
   ngAfterViewInit() {
 
   }
+
+  /********************* Shard OnClick Functions ***********************/
 
   importShard(shardId){
     console.log("Request to import shard " + shardId);
   }
 
   startShard(shardId){
-    console.log("Request to start shard " + shardId);
+    this.dataService.startShard(shardId, this.token).subscribe((data) => {
+      // Toggle this chain's status on success
+      console.dir(data.message);
+    });
   }
 
   pauseShard(shardId){
-    console.log("Request to pause shard " + shardId);
+    this.dataService.pauseShard(shardId, this.token).subscribe((data) => {
+      // Toggle this chain's status on success
+      console.dir(data.message);
+    });
   }
 
   deleteShard(shardId){
-    console.log("Request to delete shard " + shardId);
+    this.dataService.deleteShard(shardId, this.token).subscribe((data) => {
+      // Remove this chain from view on success
+      console.dir(data.message);
+    });
   }
 
   reviveShard(shardId){
     console.log("Request to revive shard " + shardId);
   }
+
+  /********************* Mainchain OnClick Functions ***********************/
+
+  importMainchain(){
+    console.log("Request to import mainchain.");
+  }
+
+  startMainchain(){
+    this.dataService.startMainchain(this.token).subscribe((data) => {
+      // Toggle chain state on success
+      console.dir(data.message);
+    });
+  }
+
+  pauseMainchain(){
+    this.dataService.pauseMainchain(this.token).subscribe((data) => {
+      // Toggle chain state on success
+      console.dir(data.message);
+    });
+  }
+
+  deleteMainchain(){
+    this.dataService.deleteMainchain(this.token).subscribe((data) => {
+      // Remove mainchain from view on success (can be added back later)
+      console.dir(data.message);
+    });
+  }
+
+  reviveMainchain(){
+    console.log("Request to revive mainchain.");
+  }
+
+  /*************************************************************************/
 
   switchMinerType(){
     console.log("Request to switch miner type. Current type is " + this.minerType);

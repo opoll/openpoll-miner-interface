@@ -155,13 +155,13 @@
                           <td><span [ngClass]="{'label': true, 'label-success': mainchainInfo.status == 'Active', 'label-warning': mainchainInfo.status == 'Paused',
                             'label-danger': mainchainInfo.status == 'Failed'}">{{mainchainInfo.status}}</span></td>
                           <div *ngIf="mainchainInfo.status === 'Active'">
-                              <td><span class="label label-warning" (click)="pauseShard(mainchainInfo.id)">Pause</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                              <td><span class="label label-warning" (click)="pauseMainchain()">Pause</span> <span class="label label-danger" (click)="deleteMainchain()">Delete</span></td>
                           </div>
                           <div *ngIf="mainchainInfo.status === 'Paused'">
-                              <td><span class="label label-success" (click)="startShard(mainchainInfo.id)">Start</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                              <td><span class="label label-success" (click)="startMainchain()">Start</span> <span class="label label-danger" (click)="deleteMainchain()">Delete</span></td>
                           </div>
                           <div *ngIf="mainchainInfo.status === 'Failed'">
-                              <td><span class="label label-primary" (click)="reviveShard(mainchainInfo.id)">Revive</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                              <td><span class="label label-primary" (click)="reviveMainchain()">Revive</span> <span class="label label-danger" (click)="deleteMainchain()">Delete</span></td>
                           </div>
                         </tr>
                       </table>
