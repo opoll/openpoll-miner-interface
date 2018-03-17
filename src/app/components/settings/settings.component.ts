@@ -7,12 +7,18 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
+  refreshRate: number;
 
   constructor(private dataService: DataService) {
-
+    this.refreshRate = 30;
   }
 
   ngOnInit() {
+    
+  }
+
+  changeRefreshRate(newRate){
+    console.log(`Request to change refresh rate from ${this.refreshRate} seconds to ${newRate} seconds`);
   }
 
 }

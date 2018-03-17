@@ -5,8 +5,6 @@ import {DefaultRoutingModule} from './default-routing.module';
 import {SharedModule} from '../../../shared/shared.module';
 import {ChartModule} from 'angular2-chartjs';
 import {SimpleNotificationsModule} from 'angular2-notifications';
-
-import { DataService } from '../../../services/data.service';
 import { HttpModule } from '@angular/http';
 
 @NgModule({
@@ -18,7 +16,7 @@ import { HttpModule } from '@angular/http';
     HttpModule,
     SimpleNotificationsModule.forRoot()
   ],
-  providers: [DataService],
+  providers: [],
   declarations: [DefaultComponent],
   bootstrap: [DefaultComponent]
 })

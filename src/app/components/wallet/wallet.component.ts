@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
+import { TokenService } from '../../services/token.service';
 
 @Component({
   selector: 'app-wallet',
@@ -7,6 +8,9 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./wallet.component.scss']
 })
 export class WalletComponent implements OnInit {
+  // Token
+  token: string;
+
   // Card data
   balance: number;
   balanceInDollars: number;
@@ -15,75 +19,52 @@ export class WalletComponent implements OnInit {
   // Wallet table data
   wallets: Wallet[];
 
-  constructor(private dataService: DataService) {
-    // Wallets
-    this.wallets = [
-      {
-        id: 'a6ffed9-4252-427e-af7d-3dcaaf2db2df',
-        addresses: [
-          'mwVb4SJUxAoKmj3B1eQmxoEHJXY7v8izPk',
-          '88dd9d005d9c3a31791455c9216d9cf3'
-        ],
-        balance: 265
-      },
-      {
-        id: 'ce9d035-44c8-96a7-85c5-2dba5aad072',
-        addresses: [
-          'mo1fKAbgdZDnrh2CR423kvw6YLggntaRF3'
-        ],
-        balance: 103
-      },
-      {
-        id: 'da492b1-c744-9bbe-d10e-cd871a65fac',
-        addresses: [
-          'e293e42b3bd765fad06c1ae258ca1405',
-          '90671611afdd76cd015de2cd29d8a1ef',
-          '96e7bbe0934446d708293f73d24ca45c'
-        ],
-        balance: 930
-      },
-      {
-        id: 'e81bcf8-02d6-afea-1006-f9f02b76f',
-        addresses: [
-          '9edc1d079f29a6e42f8edf18d56876fe',
-          'e6b3e05f375567ef4d4b5aa5150fc265'
-        ],
-        balance: 0
-      }
-    ]
-
-    // Get balance data
-    this.balance = getSumOfAllWallets(this.wallets);
-    this.balanceInDollars = convertPOLtoUSD(this.balance);
-    this.totalWallets = this.wallets.length;
-  }
+  constructor(private dataService: DataService, private tokenService: TokenService) {}
 
   ngOnInit() {
+    // Subscribe to observable admin auth token
+    this.tokenService.adminAuthToken.subscribe(adminAuthToken => {
+      this.token = adminAuthToken;
+    });
 
-  }
+    // Fetch wallets
+    this.dataService.getWalletsInfo(this.token).subscribe((data) => {
+      this.wallets = data.wallets;
 
-  generateWallet(password, confirmPassword){
-    console.log("Request to generate a wallet with password " + password + ". Confirm password is " + confirmPassword);
-  }
-
-  generateWalletAddress(walletId){
-    console.log("Request to generate an additional address for wallet " + walletId);
-  }
-
-  exportWalletKeys(walletId){
-    console.log("Request to export wallet keys for wallet " + walletId);
-  }
-
-  exportAllWallets(wallets){
-    console.log("Request to export wallet(s)");
-    wallets.forEach(function(wallet) {
-      console.log(wallet.id);
+      // Calculate balance data and populate other variables
+      this.balance = getSumOfAllWallets(this.wallets);
+      this.balanceInDollars = convertPOLtoUSD(this.balance);
+      this.totalWallets = this.wallets.length;
     });
   }
 
-  withdrawFromWallets(wallets){
+  generateWallet(password, confirmPassword){
+    // First check to make sure password and confirmPassword match
+
+    // Execute request to add wallet using provided password
+    this.dataService.addWallet(password, this.token).subscribe((data) => {
+      // Add the returned wallet to the view if wallet creation is successful
+      console.dir(data.wallet);
+    });
+  }
+
+  exportWalletKeys(walletId){
+    this.dataService.getWalletKeys(walletId, this.token).subscribe((data) => {
+      // Download the keys as an arbitrary file type of choice
+      console.dir(data.keys);
+    });
+  }
+
+  exportAllWallets(){
+    this.dataService.exportWallets(this.token).subscribe((data) => {
+      // Download the wallets as an arbitrary file type of choice
+      console.dir(data.wallets);
+    });
+  }
+
+  withdrawFromWallets(){
     console.log("Request to withdraw funds for wallet(s)");
-    wallets.forEach(function(wallet) {
+    this.wallets.forEach(function(wallet) {
       console.log(wallet.id);
     });
   }
@@ -93,7 +74,10 @@ export class WalletComponent implements OnInit {
   }
 
   deleteWallet(walletId){
-    console.log("Request to delete wallet " + walletId);
+    this.dataService.deleteWallet(walletId, this.token).subscribe((data) => {
+      // Tell user status of delete
+      console.dir(data.deletionStatus);
+    });
   }
 
 }
@@ -112,6 +96,6 @@ function convertPOLtoUSD(polVal){
 
 interface Wallet{
   id: string;
-  addresses: string[];
+  address: string;
   balance: number;
 }

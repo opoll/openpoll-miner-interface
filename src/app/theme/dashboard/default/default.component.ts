@@ -1,8 +1,9 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, Input,} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 
 import {NotificationsService} from 'angular2-notifications';
 import { DataService } from '../../../services/data.service';
+import { TokenService } from '../../../services/token.service';
 
 @Component({
   selector: 'app-default',
@@ -33,123 +34,157 @@ export class DefaultComponent implements OnInit, AfterViewInit {
     position: ['bottom', 'right'],
   };
 
+  // token + minerType
+  token:string;
+  minerType: string;
+
   // View variables that will be dynamically updated
   totalShardsAvaliable: number;
-  totalBlocksFound: number;
-  totalBlocksImported: number;
+  hashrate: number;
+  netAvgHashrate: number;
 
   // Statues
   totalActive: number;
   totalPaused: number;
+  totalAwaitingResponses: number;
   totalFailed: number;
 
   // Table information on held chains and what is being worked on
-  chainEntries:ChainEntry[];
+  mainchainInfo:MainchainEntry;
+  chainEntries:ShardEntry[];
+  avaliableShards:ShardInfo[];
 
-  constructor(private servicePNotify: NotificationsService, private dataService: DataService) {
-    this.totalShardsAvaliable = 150;
-    this.totalBlocksFound = 23;
-    this.totalBlocksImported = 100;
-
-    this.chainEntries = [
-      {
-        type: 'mainchain',
-        id: 'main',
-        height: 403,
-        lastUpdated: '02-31-2018',
-        status: 'Paused'
-      },
-      {
-        type: 'shard',
-        id: '0x74324d303857b5779bca422f211b6d75',
-        height: 14,
-        lastUpdated: '02-24-2018',
-        status: 'Active'
-      },
-      {
-        type: 'shard',
-        id: '0x3871612dc2bf2add6de545b950701933',
-        height: 24,
-        lastUpdated: '03-01-2018',
-        status: 'Active'
-      },
-      {
-        type: 'shard',
-        id: '0xf8324e74713c0d65a2a025d9a744b58f',
-        height: 14,
-        lastUpdated: '03-23-2018',
-        status: 'Failed'
-      },
-      {
-        type: 'shard',
-        id: '0x489c3f18c6c4de7b799c3cc000d3d670',
-        height: 21,
-        lastUpdated: '04-24-2018',
-        status: 'Paused'
-      },
-      {
-        type: 'shard',
-        id: '0xbb155c1642c33ec1358cb23f7ea312a7',
-        height: 40,
-        lastUpdated: '02-02-2018',
-        status: 'Active'
-      },
-      {
-        type: 'shard',
-        id: '0x0990f688ae97f026d2aacf1f6caacc97',
-        height: 49,
-        lastUpdated: '02-21-2018',
-        status: 'Active'
-      },
-      {
-        type: 'shard',
-        id: '0x1e176a44ebb3be6a21f68a0de9d17d8c',
-        height: 33,
-        lastUpdated: '02-29-2018',
-        status: 'Active'
-      },
-      {
-        type: 'shard',
-        id: '0xfb308a4a53707fa4da4e694466d88888',
-        height: 8,
-        lastUpdated: '02-21-2018',
-        status: 'Failed'
-      }
-    ]
-
-    // Fetch chain statuses
-    const statuses = getStatusesFromChainEntries(this.chainEntries);
-
-    this.totalActive = statuses.active;
-    this.totalPaused = statuses.paused;
-    this.totalFailed = statuses.failed;
-  }
+  constructor(private servicePNotify: NotificationsService, private dataService: DataService, private tokenService: TokenService) {}
 
   ngOnInit() {
-    // Fetch data to populate component with using data service
-    // this.dataService.getChainData().subscribe((data) => {
-    //   console.log(data);
-    // })
-  }
+    // Subscribe to observable admin auth token
+    this.tokenService.adminAuthToken.subscribe(adminAuthToken => {
+      this.token = adminAuthToken;
+    });
+
+    // Subscribe to observable minerType info
+    this.tokenService.minerType.subscribe(minerType => {
+      this.minerType = minerType;
+    });
+
+
+    this.hashrate = 11;
+    this.netAvgHashrate = 8;
+    
+    // The shards that this miner is working on
+    if(this.minerType == "Shard"){
+      this.dataService.getShardsInfo(this.token).subscribe((data) => {
+        // Populate chainEntries
+        this.chainEntries = data.shardEntries;
+        sortByStatus(this.chainEntries);
+
+        // Data on avaliable shards that this miner can work on
+        this.avaliableShards = [
+          {
+            pollHash: '0xfb308a4asdffs07fa4da4asdffs6d88888',
+            numMiners: 5,
+            difficulty: 2,
+            pollName: '2018 National Forest Conservation Survey'
+          },
+          {
+            pollHash: '0xb9ce7e0f5dfd7c4b7649832d8cbb7149d67',
+            numMiners: 8,
+            difficulty: 3,
+            pollName: 'New University of Maryland North Campus Diner Poll'
+          }
+        ];
+
+        // Fetch chain statuses
+        const statuses = getStatusesFromChainEntries(this.chainEntries);
+
+        this.totalActive = statuses.active;
+        this.totalPaused = statuses.paused;
+        this.totalAwaitingResponses = statuses.awaitingResponses;
+        this.totalFailed = statuses.failed;
+
+        this.totalShardsAvaliable = this.avaliableShards.length;
+
+      });
+
+    } else if (this.minerType == 'Mainchain'){
+      this.dataService.getMainchainInfo(this.token).subscribe((data) => {
+        this.mainchainInfo = data.mainchainEntry;
+      });
+
+    }
+
+  } // End ngOnInit()
 
   ngAfterViewInit() {
 
   }
 
+  /********************* Shard OnClick Functions ***********************/
+
+  importShard(shardId){
+    console.log("Request to import shard " + shardId);
+  }
+
   startShard(shardId){
-    console.log("Request to start shard " + shardId);
+    this.dataService.startShard(shardId, this.token).subscribe((data) => {
+      // Toggle this chain's status on success
+      console.dir(data.message);
+    });
   }
 
   pauseShard(shardId){
-    console.log("Request to pause shard " + shardId);
+    this.dataService.pauseShard(shardId, this.token).subscribe((data) => {
+      // Toggle this chain's status on success
+      console.dir(data.message);
+    });
   }
 
   deleteShard(shardId){
-    console.log("Request to delete shard " + shardId);
+    this.dataService.deleteShard(shardId, this.token).subscribe((data) => {
+      // Remove this chain from view on success
+      console.dir(data.message);
+    });
   }
 
   reviveShard(shardId){
     console.log("Request to revive shard " + shardId);
+  }
+
+  /********************* Mainchain OnClick Functions ***********************/
+
+  importMainchain(){
+    console.log("Request to import mainchain.");
+  }
+
+  startMainchain(){
+    this.dataService.startMainchain(this.token).subscribe((data) => {
+      // Toggle chain state on success
+      console.dir(data.message);
+    });
+  }
+
+  pauseMainchain(){
+    this.dataService.pauseMainchain(this.token).subscribe((data) => {
+      // Toggle chain state on success
+      console.dir(data.message);
+    });
+  }
+
+  deleteMainchain(){
+    this.dataService.deleteMainchain(this.token).subscribe((data) => {
+      // Remove mainchain from view on success (can be added back later)
+      console.dir(data.message);
+    });
+  }
+
+  reviveMainchain(){
+    console.log("Request to revive mainchain.");
+  }
+
+  /*************************************************************************/
+
+  switchMinerType(){
+    console.log("Request to switch miner type. Current type is " + this.minerType);
   }
 
 }
@@ -157,21 +192,45 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 function getStatusesFromChainEntries(chainEntries){
   let active = 0;
   let paused = 0;
+  let awaitingResponses = 0;
   let failed = 0;
 
   chainEntries.forEach(function(entry) {
-    if(entry.status.toLowerCase() === 'active'){
-      active++;
-    } else if(entry.status.toLowerCase() === 'paused'){
-      paused++;
-    } else if(entry.status.toLowerCase() === 'failed'){
-      failed++;
+    switch(entry.status.toLowerCase()){
+      case 'active':
+        active++;
+        break;
+      case 'paused':
+        paused++;
+        break;
+      case 'awaiting responses':
+        awaitingResponses++;
+        break;
+      case 'failed':
+        failed++;
+        break;
     }
   });
 
   return {
-    active, paused, failed
+    active, paused, awaitingResponses, failed
   }
+}
+
+function sortByStatus(chainEntries){
+  chainEntries.sort(compareChainEntries)
+}
+
+function compareChainEntries(a, b){
+  let statuses = ['failed', 'awaiting responses', 'paused', 'active'];
+
+  if(statuses.indexOf(a.status.toLowerCase()) > statuses.indexOf(b.status.toLowerCase())){
+    return -1;
+  } else if (statuses.indexOf(a.status.toLowerCase()) < statuses.indexOf(b.status.toLowerCase())){
+    return 1;
+  }
+
+  return 0;
 }
 
 function e(h, g, i) {
@@ -222,11 +281,25 @@ function f() {
   };
 }
 
-// Interface defining the each table row of chain information
-interface ChainEntry{
-    type:string, // 'shard' or 'mainchain' (corresponds to png image names)
-    id:string, // id of the chain. If it is the mainchain id is 'main'. If it is a shard it will look like this '0x23af69fa526bbf12372e'
-    height:number, // height of the blockchain
-    lastUpdated: string, // date this chain entry was last updated
-    status: string// 'active', 'paused', or 'failed'
+// Interface defining each table row of chain information
+interface ShardEntry{
+    id: string, // id of the chain. If it is the mainchain id is 'main'. If it is a shard it will look like this '0x23af69fa526bbf12372e'
+    height: number, // height of the blockchain
+    respPoolSize: number, // the size of the response pool maintained locally associated with this shard
+    lastUpdated: string, // date this shard entry was last updated
+    status: string // 'active', 'paused', 'awaiting responses', or 'failed'
+}
+
+interface MainchainEntry{
+  height: number, // height of the blockchain
+  lastUpdated: string, // date this chain was last updated
+  status: string // 'active', 'paused', or 'failed'
+}
+
+// Interface defining each table row of information of shards that can be imported
+interface ShardInfo{
+  pollHash: string,
+  numMiners: number,
+  difficulty: number,
+  pollName: string
 }
