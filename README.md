@@ -15,4 +15,8 @@ Ensure that you have the [Angular CLI](https://cli.angular.io/) installed global
 
 3.) Run `npm install` to install dependencies
 
-4.) Run `npm start` or `ng serve` to run the application on http://localhost:4200/ (`npm start` just runs the application's start script which is defined as `ng serve` leading to the same result)
+4.) Start an instance of the [openpoll mining application](https://github.com/opoll/opollminer) and select miner type as either 'shard' or 'mainchain'
+
+5.) Run `npm start` or `ng serve` to run the application on http://localhost:4200/ (`npm start` just runs the application's start script which is defined as `ng serve` leading to the same result)
+
+6.) If you close the browser window or have any case where the Angular app must restart, you must restart the mining application again before calling `npm start` or `ng serve` again since the adminAuthToken is only served once and cannot be queried again. Then a new token will be distributed and the interface will work as normal again.
