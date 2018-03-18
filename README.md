@@ -19,4 +19,4 @@ Ensure that you have the [Angular CLI](https://cli.angular.io/) installed global
 
 5.) Run `npm start` or `ng serve` to run the application on http://localhost:4200/ (`npm start` just runs the application's start script which is defined as `ng serve` leading to the same result)
 
-6.) If you close the browser window or have any case where the Angular app must restart, you must restart the mining application again before calling `npm start` or `ng serve` again since the adminAuthToken is only served once and cannot be queried again. Then a new token will be distributed and the interface will work as normal again.
+6.) If you close the browser window, refresh, or have any case where the Angular app must restart, you must restart the mining application again before calling `npm start` or `ng serve` again since the adminAuthToken is only served once and cannot be queried again. Then a new token will be distributed and the interface will work as normal again.
