@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, Input,} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
+import * as R from 'ramda';
 
 import {NotificationsService} from 'angular2-notifications';
 import { DataService } from '../../../services/data.service';
@@ -76,18 +77,18 @@ export class DefaultComponent implements OnInit, AfterViewInit {
       this.dataService.getShardsInfo(this.token).subscribe((data) => {
         // Populate chainEntries
         this.chainEntries = data.shardEntries;
-        sortByStatus(this.chainEntries);
+        sortShardsByStatus(this.chainEntries);
 
         // Data on avaliable shards that this miner can work on
         this.avaliableShards = [
           {
-            pollHash: '0xfb308a4asdffs07fa4da4asdffs6d88888',
+            pollHash: '099F10317CDBA085AE450269504EB551412513B028E2512118E42FB41F1E8953',
             numMiners: 5,
             difficulty: 2,
             pollName: '2018 National Forest Conservation Survey'
           },
           {
-            pollHash: '0xb9ce7e0f5dfd7c4b7649832d8cbb7149d67',
+            pollHash: 'B8C91B66EB23513EB3EAD1F5285AD21080DFDA75019F94BF3273F87B49D55F18',
             numMiners: 8,
             difficulty: 3,
             pollName: 'New University of Maryland North Campus Diner Poll'
@@ -101,8 +102,6 @@ export class DefaultComponent implements OnInit, AfterViewInit {
         this.totalPaused = statuses.paused;
         this.totalAwaitingResponses = statuses.awaitingResponses;
         this.totalFailed = statuses.failed;
-
-        this.totalShardsAvaliable = this.avaliableShards.length;
 
       });
 
@@ -121,33 +120,102 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 
   /********************* Shard OnClick Functions ***********************/
 
-  importShard(shardId){
-    console.log("Request to import shard " + shardId);
+  importShard(pollHash){
+    // Find the chain entry's index in the chainEntries array
+    const pollIndex = getEntryIndexById('pollHash', pollHash, this.avaliableShards);
+
+    console.log("Request to import poll " + pollHash);
+
+    // Remove avaliable poll from view upon import completion
+    this.avaliableShards.splice(pollIndex, 1);
+
+    // Add the poll to the shards being worked on tab
+    this.chainEntries.push({
+      id: pollHash,
+      height: 0,
+      respPoolSize: 0,
+      lastUpdated: nowAsFmtDate(),
+      status: "Awaiting Responses"
+    })
+
+    // Update dashboard card count
+    this.totalAwaitingResponses++;
+
+    // Resort list
+    sortShardsByStatus(this.chainEntries);
   }
 
   startShard(shardId){
+    // Find the chain entry's index in the chainEntries array
+    const shardIndex = getEntryIndexById('id', shardId, this.chainEntries);
+
     this.dataService.startShard(shardId, this.token).subscribe((data) => {
       // Toggle this chain's status on success
-      console.dir(data.message);
+      this.chainEntries[shardIndex].status = "Active";
+
+      // Update dashboard card count
+      this.totalActive++;
+      this.totalPaused--;
+
     });
   }
 
   pauseShard(shardId){
+    // Find the chain entry's index in the chainEntries array
+    const shardIndex = getEntryIndexById('id', shardId, this.chainEntries);
+    
     this.dataService.pauseShard(shardId, this.token).subscribe((data) => {
       // Toggle this chain's status on success
-      console.dir(data.message);
+      this.chainEntries[shardIndex].status = "Paused";
+
+      // Update dashboard card count
+      this.totalPaused++;
+      this.totalActive--;
+      
     });
   }
 
   deleteShard(shardId){
+    // Find the chain entry's index in the chainEntries array
+    const shardIndex = getEntryIndexById('id', shardId, this.chainEntries);
+    const targetShardStatus = this.chainEntries[shardIndex].status;
+
     this.dataService.deleteShard(shardId, this.token).subscribe((data) => {
       // Remove this chain from view on success
-      console.dir(data.message);
+      this.chainEntries.splice(shardIndex, 1);
+
+      // Update dashboard card count
+      switch(targetShardStatus){
+        case "Active":
+          this.totalActive--;
+          break;
+        case "Paused":
+          this.totalPaused--;
+          break;
+        case "Awaiting Responses":
+          this.totalAwaitingResponses--;
+          break;
+        case "Failed":
+          this.totalFailed--;
+          break;
+      }
+
     });
   }
 
   reviveShard(shardId){
+    // Find the chain entry's index in the chainEntries array
+    const shardIndex = getEntryIndexById('id', shardId, this.chainEntries);
+
     console.log("Request to revive shard " + shardId);
+
+    // Toggle this chain's status on success
+    this.chainEntries[shardIndex].status = "Paused";
+
+    // Update dashboard card count
+    this.totalPaused++;
+    this.totalFailed--;
+
   }
 
   /********************* Mainchain OnClick Functions ***********************/
@@ -186,7 +254,23 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   switchMinerType(){
     console.log("Request to switch miner type. Current type is " + this.minerType);
   }
+  
+}
 
+/************ Generic Function Helpers ************/
+
+function nowAsFmtDate(){
+  const dateObj = new Date();
+
+  const day = dateObj.getDate();
+  const month = dateObj.getMonth() + 1; // Gives month index from 0-11 therefore we add 1 to adjust for this
+  const year = dateObj.getFullYear();
+
+  return `${month}-${day}-${year}`;
+}
+
+function getEntryIndexById(property, value, array){
+  return R.findIndex(R.propEq(property, value))(array);
 }
 
 function getStatusesFromChainEntries(chainEntries){
@@ -217,7 +301,7 @@ function getStatusesFromChainEntries(chainEntries){
   }
 }
 
-function sortByStatus(chainEntries){
+function sortShardsByStatus(chainEntries){
   chainEntries.sort(compareChainEntries)
 }
 

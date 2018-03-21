@@ -18,11 +18,8 @@ export class TokenService {
   // of the source as an observable
   initAdminInfo(){
     this.dataService.getAdminInfo().subscribe((info) => {
-      console.dir(info)
       this.tokenSource.next(info.adminAuthToken);
       this.minerTypeSource.next(info.minerType);
-      console.log(this.adminAuthToken, this.minerType)
-      console.log('admin info fetched and sources set')
     });
   }
 

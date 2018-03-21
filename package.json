@@ -47,6 +47,7 @@
     "ngx-chips": "^1.6.7",
     "ngx-color-picker": "^5.3.5",
     "ngx-perfect-scrollbar": "^5.0.1",
+    "ramda": "^0.25.0",
     "rxjs": "^5.5.6",
     "screenfull": "^3.3.2",
     "sweetalert2": "^7.15.1",
