@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TokenService } from '../../services/token.service';
+import * as R from 'ramda';
 
 @Component({
   selector: 'app-wallet',
@@ -14,7 +15,6 @@ export class WalletComponent implements OnInit {
   // Card data
   balance: number;
   balanceInDollars: number;
-  totalWallets: number;
 
   // Wallet table data
   wallets: Wallet[];
@@ -34,17 +34,20 @@ export class WalletComponent implements OnInit {
       // Calculate balance data and populate other variables
       this.balance = getSumOfAllWallets(this.wallets);
       this.balanceInDollars = convertPOLtoUSD(this.balance);
-      this.totalWallets = this.wallets.length;
     });
   }
 
   generateWallet(password, confirmPassword){
     // First check to make sure password and confirmPassword match
+    if(password != confirmPassword){
+      // Reissue modal indicating mismatch
+
+    }
 
     // Execute request to add wallet using provided password
     this.dataService.addWallet(password, this.token).subscribe((data) => {
       // Add the returned wallet to the view if wallet creation is successful
-      console.dir(data.wallet);
+      this.wallets.push(data.wallet);
     });
   }
 
@@ -74,9 +77,16 @@ export class WalletComponent implements OnInit {
   }
 
   deleteWallet(walletId){
+    // Get index of wallet to delete
+    const walletIndex = R.findIndex(R.propEq("id", walletId))(this.wallets);
+
     this.dataService.deleteWallet(walletId, this.token).subscribe((data) => {
-      // Tell user status of delete
+      // Tell user status of deletion 
       console.dir(data.deletionStatus);
+
+      // Remove wallet from view
+      this.wallets.splice(walletIndex, 1);
+
     });
   }
 

@@ -40,7 +40,6 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   minerType: string;
 
   // View variables that will be dynamically updated
-  totalShardsAvaliable: number;
   hashrate: number;
   netAvgHashrate: number;
 
