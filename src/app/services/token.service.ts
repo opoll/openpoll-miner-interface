@@ -11,7 +11,9 @@ export class TokenService {
   private minerTypeSource = new BehaviorSubject<string>("init type");
   minerType = this.minerTypeSource.asObservable();
 
-  constructor(private dataService:DataService) { }
+  constructor(private dataService:DataService) {
+    console.log("token service connected");
+  }
 
   // Called in app component to initialize Behaviour Subjects. Other
   // components will observe the source's value through a proxy variable

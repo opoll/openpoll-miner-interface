@@ -24,6 +24,7 @@
     "@angular/router": "^5.2.8",
     "@ng-bootstrap/ng-bootstrap": "^1.0.1",
     "@swimlane/ngx-datatable": "^11.0.4",
+    "@types/socket.io-client": "^1.4.32",
     "angular2-chartjs": "^0.4.1",
     "angular2-notifications": "^0.9.7",
     "bootstrap": "^4.0.0-beta",
@@ -50,6 +51,7 @@
     "ramda": "^0.25.0",
     "rxjs": "^5.5.6",
     "screenfull": "^3.3.2",
+    "socket.io-client": "^2.0.4",
     "sweetalert2": "^7.15.1",
     "zone.js": "^0.8.19"
   },

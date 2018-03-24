@@ -12,6 +12,9 @@ import {BreadcrumbsComponent} from './layout/admin/breadcrumbs/breadcrumbs.compo
 
 import { DataService } from './services/data.service';
 import { TokenService } from './services/token.service';
+import { WebSocketService } from './services/web-socket.service';
+import { EventService } from './services/event.service';
+
 import { HttpModule } from '@angular/http';
 
 @NgModule({
@@ -27,7 +30,13 @@ import { HttpModule } from '@angular/http';
     SharedModule,
     HttpModule,
   ],
-  providers: [MenuItems, DataService, TokenService],
+  providers: [
+    MenuItems,
+    DataService,
+    TokenService,
+    WebSocketService,
+    EventService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
