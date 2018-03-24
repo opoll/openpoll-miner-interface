@@ -5,6 +5,7 @@ import * as R from 'ramda';
 import {NotificationsService} from 'angular2-notifications';
 import { DataService } from '../../../services/data.service';
 import { TokenService } from '../../../services/token.service';
+import { EventService } from '../../../services/event.service';
 
 @Component({
   selector: 'app-default',
@@ -54,7 +55,10 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   chainEntries:ShardEntry[];
   avaliableShards:ShardInfo[];
 
-  constructor(private servicePNotify: NotificationsService, private dataService: DataService, private tokenService: TokenService) {}
+  constructor(private servicePNotify: NotificationsService,
+    private dataService: DataService,
+    private tokenService: TokenService,
+    private eventService: EventService) {}
 
   ngOnInit() {
     // Subscribe to observable admin auth token
@@ -67,6 +71,12 @@ export class DefaultComponent implements OnInit, AfterViewInit {
       this.minerType = minerType;
     });
 
+    // Connect dashboard to miner w/ WebSocketService
+    // Subscribe to any event data coming through
+    this.eventService.eventData.subscribe(eventData => {
+      // Update the dashboard with the data that comes through
+      console.log(eventData);
+    });
 
     this.hashrate = 11;
     this.netAvgHashrate = 8;

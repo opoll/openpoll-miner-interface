@@ -7,19 +7,14 @@ export class EventService {
 
   // Values observers can subscribe to in whatever
   // component service is pulled into
-  messages: Subject<any>;
+  eventData: Subject<any>;
 
   constructor(private wsService: WebSocketService) {
-    this.messages = <Subject<any>>wsService
+    this.eventData = <Subject<any>>wsService 
       .connect()
       .map((response: any): any =>{
         return response;
-      })
-  }
-
-  // Test send message to server
-  sendMessage(msg){
-    this.messages.next(msg);
+      });
   }
 
 }

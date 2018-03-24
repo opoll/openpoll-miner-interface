@@ -24,7 +24,8 @@ export class AppComponent implements OnInit {
       window.scrollTo(0, 0);
     });
 
-    
+    // Fetch admin info when app is spawned
     this.tokenService.initAdminInfo();
+    
   }
 }
