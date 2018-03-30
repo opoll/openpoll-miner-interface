@@ -9,8 +9,9 @@ import * as R from 'ramda';
   styleUrls: ['./wallet.component.scss']
 })
 export class WalletComponent implements OnInit {
-  // Token
+  // Observed Variables (from TokenService)
   token: string;
+  isAuthenticated:boolean;
 
   // Card data
   balance: number;
@@ -19,21 +20,25 @@ export class WalletComponent implements OnInit {
   // Wallet table data
   wallets: Wallet[];
 
+  // Input Box Filler
+  tokenInput = "";
+
   constructor(private dataService: DataService, private tokenService: TokenService) {}
 
   ngOnInit() {
+    // Placeholder Data
+    this.wallets = [];
+    this.balance = 0;
+    this.balanceInDollars = 0;
+
     // Subscribe to observable admin auth token
     this.tokenService.adminAuthToken.subscribe(adminAuthToken => {
       this.token = adminAuthToken;
     });
 
-    // Fetch wallets
-    this.dataService.getWalletsInfo(this.token).subscribe((data) => {
-      this.wallets = data.wallets;
-
-      // Calculate balance data and populate other variables
-      this.balance = getSumOfAllWallets(this.wallets);
-      this.balanceInDollars = convertPOLtoUSD(this.balance);
+    // Subscribe to observable isAuthenticated
+    this.tokenService.isAuthenticated.subscribe(isAuthenticated => {
+      this.isAuthenticated = isAuthenticated;
     });
   }
 
@@ -87,6 +92,36 @@ export class WalletComponent implements OnInit {
       // Remove wallet from view
       this.wallets.splice(walletIndex, 1);
 
+    });
+  }
+
+  /***************************************************************************/
+
+  // Takes in the input token and updates the token service with the value so all
+  // observers will see the change
+  setToken(tokenIn){
+    // Set the new token and extract result
+    this.tokenService.setToken(tokenIn).then((isTokenValid) => {
+      if(isTokenValid){
+        // Fetch the data if the token validated with no problems.
+        // Otherwise do nothing.
+        this.fetchWalletData();
+      } else{
+        // Invalid token.
+        // Wipe input box and prompt user to input a valid token
+        this.tokenInput = "";
+      }
+    });
+  }
+
+  fetchWalletData(){
+    // Fetch wallets
+    this.dataService.getWalletsInfo(this.token).subscribe((data) => {
+      this.wallets = data.wallets;
+
+      // Calculate balance data and populate other variables
+      this.balance = getSumOfAllWallets(this.wallets);
+      this.balanceInDollars = convertPOLtoUSD(this.balance);
     });
   }
 

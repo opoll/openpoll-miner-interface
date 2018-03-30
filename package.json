@@ -23,6 +23,8 @@
     "@angular/platform-browser-dynamic": "^5.2.8",
     "@angular/router": "^5.2.8",
     "@ng-bootstrap/ng-bootstrap": "^1.0.1",
+    "@openpoll/helpers": "^1.0.1",
+    "@openpoll/schemas": "^1.0.13",
     "@swimlane/ngx-datatable": "^11.0.4",
     "@types/socket.io-client": "^1.4.32",
     "angular2-chartjs": "^0.4.1",
