@@ -36,9 +36,10 @@ export class DefaultComponent implements OnInit, AfterViewInit {
     position: ['bottom', 'right'],
   };
 
-  // token + minerType
+  // Observed Variables (from TokenService)
   token:string;
   minerType: string;
+  isAuthenticated:boolean;
 
   // View variables that will be dynamically updated
   hashrate: number;
@@ -55,12 +56,27 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   chainEntries:ShardEntry[];
   avaliableShards:ShardInfo[];
 
+  // Input Box Filler
+  tokenInput = "";
+
   constructor(private servicePNotify: NotificationsService,
     private dataService: DataService,
     private tokenService: TokenService,
     private eventService: EventService) {}
 
   ngOnInit() {
+    // Placeholder values
+    this.hashrate = 11;
+    this.netAvgHashrate = 8;
+    this.chainEntries = [];
+    this.avaliableShards = [];
+    this.totalActive = 0;
+    this.totalPaused = 0;
+    this.totalAwaitingResponses = 0;
+    this.totalFailed = 0;
+    this.mainchainInfo = null;
+
+
     // Subscribe to observable admin auth token
     this.tokenService.adminAuthToken.subscribe(adminAuthToken => {
       this.token = adminAuthToken;
@@ -71,55 +87,21 @@ export class DefaultComponent implements OnInit, AfterViewInit {
       this.minerType = minerType;
     });
 
-    // Connect dashboard to miner w/ WebSocketService
-    // Subscribe to any event data coming through
-    this.eventService.eventData.subscribe(eventData => {
-      // Update the dashboard with the data that comes through
-      console.log(eventData);
+    // Subscribe to observable isAuthenticated
+    this.tokenService.isAuthenticated.subscribe(isAuthenticated => {
+      if(isAuthenticated){
+        // Fetch the data since token was validated with no problem.
+        this.fetchMinerData();
+      } else {
+        // isAuthenticated is false. Wipe the input box and prompt for correct token.
+        this.tokenInput = "";
+      }
+
+      // Update component's value of isAuthenticated
+      this.isAuthenticated = isAuthenticated;
     });
 
-    this.hashrate = 11;
-    this.netAvgHashrate = 8;
-    
-    // The shards that this miner is working on
-    if(this.minerType == "Shard"){
-      this.dataService.getShardsInfo(this.token).subscribe((data) => {
-        // Populate chainEntries
-        this.chainEntries = data.shardEntries;
-        sortShardsByStatus(this.chainEntries);
-
-        // Data on avaliable shards that this miner can work on
-        this.avaliableShards = [
-          {
-            pollHash: '099F10317CDBA085AE450269504EB551412513B028E2512118E42FB41F1E8953',
-            numMiners: 5,
-            difficulty: 2,
-            pollName: '2018 National Forest Conservation Survey'
-          },
-          {
-            pollHash: 'B8C91B66EB23513EB3EAD1F5285AD21080DFDA75019F94BF3273F87B49D55F18',
-            numMiners: 8,
-            difficulty: 3,
-            pollName: 'New University of Maryland North Campus Diner Poll'
-          }
-        ];
-
-        // Fetch chain statuses
-        const statuses = getStatusesFromChainEntries(this.chainEntries);
-
-        this.totalActive = statuses.active;
-        this.totalPaused = statuses.paused;
-        this.totalAwaitingResponses = statuses.awaitingResponses;
-        this.totalFailed = statuses.failed;
-
-      });
-
-    } else if (this.minerType == 'Mainchain'){
-      this.dataService.getMainchainInfo(this.token).subscribe((data) => {
-        this.mainchainInfo = data.mainchainEntry;
-      });
-
-    }
+    this.hookWebsocket(); // Hook the frontend to WS events
 
   } // End ngOnInit()
 
@@ -262,6 +244,67 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 
   switchMinerType(){
     console.log("Request to switch miner type. Current type is " + this.minerType);
+  }
+
+  // Takes in the input token and updates the token service with the value so all
+  // observers will see the change
+  setToken(tokenIn){
+    // Set the new token.
+    this.tokenService.setToken(tokenIn);
+  }
+
+  // Connect dashboard to miner w/ WebSocketService
+  // Hook frontend to WS events and define behaviour
+  hookWebsocket(){
+    // Subscribe to any event data coming through
+    this.eventService.eventData.subscribe(eventData => {
+      // Update the dashboard with the data that comes through
+      console.log(eventData);
+    });
+  }
+
+  // After the miner has entered their admin auth token they can go to the
+  // dashboard tab and opt to fetch their data. This is the code that will execute
+  // to fetch a miner's general mining data for the home dashboard
+  fetchMinerData(){
+    // The shards that this miner is working on
+    if(this.minerType == "Shard"){
+      this.dataService.getShardsInfo(this.token).subscribe((data) => {
+        // Populate chainEntries
+        this.chainEntries = data.shardEntries;
+        sortShardsByStatus(this.chainEntries);
+
+        // Data on avaliable shards that this miner can work on
+        this.avaliableShards = [
+          {
+            pollHash: '099F10317CDBA085AE450269504EB551412513B028E2512118E42FB41F1E8953',
+            numMiners: 5,
+            difficulty: 2,
+            pollName: '2018 National Forest Conservation Survey'
+          },
+          {
+            pollHash: 'B8C91B66EB23513EB3EAD1F5285AD21080DFDA75019F94BF3273F87B49D55F18',
+            numMiners: 8,
+            difficulty: 3,
+            pollName: 'New University of Maryland North Campus Diner Poll'
+          }
+        ];
+
+        // Fetch chain statuses
+        const statuses = getStatusesFromChainEntries(this.chainEntries);
+
+        this.totalActive = statuses.active;
+        this.totalPaused = statuses.paused;
+        this.totalAwaitingResponses = statuses.awaitingResponses;
+        this.totalFailed = statuses.failed;
+
+      });
+
+    } else if (this.minerType == 'Mainchain'){
+      this.dataService.getMainchainInfo(this.token).subscribe((data) => {
+        this.mainchainInfo = data.mainchainEntry;
+      });
+    }
   }
   
 }

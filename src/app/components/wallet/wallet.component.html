@@ -1,127 +1,146 @@
 <div class="page-body">
   <div class="row">
-    <!-- Wallet Cards Start -->
-    <div class="col-md-6 col-xl-3">
-        <div class="card bg-c-pink order-card">
-          <div class="card-block">
-            <h6 class="m-b-20">Total Balance</h6>
-            <h2 class="text-right"><img class="d-flex align-self-center img-fluid" src="assets/images/earnings.png" width="100" height="100"><span>{{balance}} POL</span></h2>
-            <h6 class="m-b-0">Converted To Dollars<span class="f-right">${{balanceInDollars}}</span></h6>
-          </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-3">
-        <div class="card bg-c-blue order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"># of Wallets</h6>
-            <h2 class="text-right"><img class="d-flex align-self-center img-fluid" src="assets/images/wallet1.png" width="100" height="100"><span>{{wallets.length}}</span></h2>
-            <h6 class="m-b-0"><span class="label label-warning" (click)="exportAllWallets()">Export All Wallets</span></h6>
-          </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-3">
-        <div class="card order-card">
-          <div class="card-block">
-            <h6 class="m-b-20 text-muted">Withdraw All Funds</h6>
-            <h2 class="text-right m-t-20 m-b-20"><img class="d-flex align-self-center img-fluid" src="assets/images/payout.png" width="100" height="100"></h2>
-            <h6 class="m-t-20"><span class="label label-success" (click)="withdrawFromWallets()">Initiate Payout</span></h6>
-          </div>
-        </div>
-    </div>
-    <!-- Wallet Cards End -->
 
-    <!-- Wallets Table Start -->
-    <div class="col-sm-12">
-        <app-card [cardClass]="'tab-card'" [cardOptionBlock]="true">
-          <div class="md-tabs">
-            <ngb-tabset>
-              <ngb-tab title="Wallets">
-                <ng-template ngbTabContent>
-                  <ng-template [ngIf]="wallets.length === 0">
-                      <h3 class="text-center mt-5 mb-3">You Have No Wallets. Generate One Below.</h3>
+    <ng-template [ngIf]="isAuthenticated == false">
+      <!-- Unlock Dashboard Card-->
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-c-grey order-card">
+          <div class="card-block">
+            <h6 class="m-b-20 text-muted">Authorization Token</h6>
+            <h2 class="text-right text-muted"><img class="d-flex align-self-center img-fluid" src="assets/images/locked.png" width="100" height="100"><span>Not Authenticated</span></h2>
+            <p class="text-right text-muted">Token Can Be Found In The Console</p>
+            <input type="text" class="form-control m-b-20 m-t-20" placeholder="Enter Administrative Token" [value]="tokenInput" #token>
+            <button class="btn btn-primary btn-sm btn-round" (click)="setToken(token.value)">Unlock Admin Dashboard</button>
+          </div>
+        </div>
+      </div>
+      <!-- End Unlock Dashboard Card-->
+    </ng-template>
+
+    <ng-template [ngIf]="isAuthenticated == true">
+      <!-- Wallet Cards Start -->
+      <div class="col-md-6 col-xl-3">
+          <div class="card bg-c-pink order-card">
+            <div class="card-block">
+              <h6 class="m-b-20">Total Balance</h6>
+              <h2 class="text-right"><img class="d-flex align-self-center img-fluid" src="assets/images/earnings.png" width="100" height="100"><span>{{balance}} POL</span></h2>
+              <h6 class="m-b-0">Converted To Dollars<span class="f-right">${{balanceInDollars}}</span></h6>
+            </div>
+          </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+          <div class="card bg-c-blue order-card">
+            <div class="card-block">
+              <h6 class="m-b-20"># of Wallets</h6>
+              <h2 class="text-right"><img class="d-flex align-self-center img-fluid" src="assets/images/wallet1.png" width="100" height="100"><span>{{wallets.length}}</span></h2>
+              <h6 class="m-b-0"><span class="label label-warning" (click)="exportAllWallets()">Export All Wallets</span></h6>
+            </div>
+          </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+          <div class="card order-card">
+            <div class="card-block">
+              <h6 class="m-b-20 text-muted">Withdraw All Funds</h6>
+              <h2 class="text-right m-t-20 m-b-20"><img class="d-flex align-self-center img-fluid" src="assets/images/payout.png" width="100" height="100"></h2>
+              <h6 class="m-t-20"><span class="label label-success" (click)="withdrawFromWallets()">Initiate Payout</span></h6>
+            </div>
+          </div>
+      </div>
+      <!-- Wallet Cards End -->
+
+      <!-- Wallets Table Start -->
+      <div class="col-sm-12">
+          <app-card [cardClass]="'tab-card'" [cardOptionBlock]="true">
+            <div class="md-tabs">
+              <ngb-tabset>
+                <ngb-tab title="Wallets">
+                  <ng-template ngbTabContent>
+                    <ng-template [ngIf]="wallets.length === 0">
+                        <h3 class="text-center mt-5 mb-3">You Have No Wallets. Generate One Below.</h3>
+                    </ng-template>
+                    <ng-template [ngIf]="wallets.length !== 0">
+                      <div class="table-responsive">
+                        <table class="table">
+                          <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th>Address</th>
+                            <th>Wallet Balance</th>
+                            <th>Actions</th>
+                          </tr>
+                          <tr *ngFor="let wallet of wallets">
+                              <td><img src="assets/images/wallet.png" class="img-fluid" width="30" height="30"></td>
+                              <td>{{wallet.id}}</td>
+                              <td><span>{{wallet.address}}</span></td>
+                              <td><h6>{{wallet.balance}} POL</h6></td>
+                              <div *ngIf="wallet.balance > 0">
+                                <td><span class="label label-success" (click)="withdrawFromWallet(wallet.id)">Withdraw Funds</span> <span class="label label-primary" (click)="exportWalletKeys(wallet.id)">Export Keys</span> <span class="label label-danger" (click)="deleteWallet(wallet.id)">Delete</span></td>
+                              </div>
+                              <div *ngIf="wallet.balance === 0">
+                                <td><span class="label label-primary" (click)="exportWalletKeys(wallet.id)">Export Keys</span> <span class="label label-danger" (click)="deleteWallet(wallet.id)">Delete</span></td>
+                              </div>
+                          </tr>
+                        </table>
+                      </div>
+                    </ng-template>
                   </ng-template>
-                  <ng-template [ngIf]="wallets.length !== 0">
+                </ngb-tab>
+                <ngb-tab title="Transfer History">
+                  <ng-template ngbTabContent>
                     <div class="table-responsive">
                       <table class="table">
                         <tr>
-                          <th></th>
-                          <th>ID</th>
-                          <th>Address</th>
-                          <th>Wallet Balance</th>
-                          <th>Actions</th>
+                          <th>Transfer ID</th>
+                          <th>Amount (USD)</th>
+                          <th>Amount (POL)</th>
+                          <th>Payout Method</th>
+                          <th>Initiated On</th>
+                          <th>Status</th>
                         </tr>
-                        <tr *ngFor="let wallet of wallets">
-                            <td><img src="assets/images/wallet.png" class="img-fluid" width="30" height="30"></td>
-                            <td>{{wallet.id}}</td>
-                            <td><span>{{wallet.address}}</span></td>
-                            <td><h6>{{wallet.balance}} POL</h6></td>
-                            <div *ngIf="wallet.balance > 0">
-                              <td><span class="label label-success" (click)="withdrawFromWallet(wallet.id)">Withdraw Funds</span> <span class="label label-primary" (click)="exportWalletKeys(wallet.id)">Export Keys</span> <span class="label label-danger" (click)="deleteWallet(wallet.id)">Delete</span></td>
-                            </div>
-                            <div *ngIf="wallet.balance === 0">
-                              <td><span class="label label-primary" (click)="exportWalletKeys(wallet.id)">Export Keys</span> <span class="label label-danger" (click)="deleteWallet(wallet.id)">Delete</span></td>
-                            </div>
+                        <tr>
+                          <td>139-181903u10u338gu19y3-g13</td>
+                          <th>$129.97</th>
+                          <th>1298</th>
+                          <td>Bank Account</td>
+                          <td>04-27-18</td>
+                          <td>Pending</td>
                         </tr>
                       </table>
                     </div>
                   </ng-template>
-                </ng-template>
-              </ngb-tab>
-              <ngb-tab title="Transfer History">
-                <ng-template ngbTabContent>
-                  <div class="table-responsive">
-                    <table class="table">
-                      <tr>
-                        <th>Transfer ID</th>
-                        <th>Amount (USD)</th>
-                        <th>Amount (POL)</th>
-                        <th>Payout Method</th>
-                        <th>Initiated On</th>
-                        <th>Status</th>
-                      </tr>
-                      <tr>
-                        <td>139-181903u10u338gu19y3-g13</td>
-                        <th>$129.97</th>
-                        <th>1298</th>
-                        <td>Bank Account</td>
-                        <td>04-27-18</td>
-                        <td>Pending</td>
-                      </tr>
-                    </table>
-                  </div>
-                </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
-          </div>
-        </app-card>
-      </div>
-    <!-- Wallets Table End -->
+                  </ngb-tab>
+              </ngb-tabset>
+            </div>
+          </app-card>
+        </div>
+      <!-- Wallets Table End -->
 
-    <!-- Config Cards Start -->
-    <div class="col-md-12 col-lg-4">
-        <div class="card">
-            <div class="card-block text-center">
-              <h3>Generate A Wallet</h3>
-              <img src="assets/images/wallet.png" class="img-fluid" width="100" height="100">
-              <h4 class="m-t-20">You currently have <span class="text-c-green">{{wallets.length}}</span> wallet(s)</h4>
-              <p class="m-b-20">Enter a password for a new wallet.</p>
-              <input type="password" class="form-control m-b-20 m-t-20" placeholder="Wallet Password" #password>
-              <input type="password" class="form-control m-b-20 m-t-20" placeholder="Confirm Wallet Password" #confirmPassword>
-              <button class="btn btn-primary btn-sm btn-round" (click)="generateWallet(password.value, confirmPassword.value)">Generate Wallet</button>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-12 col-lg-4">
-        <div class="card">
-            <div class="card-block text-center">
-              <h3>Export Wallets</h3>
-              <img src="assets/images/export.png" class="img-fluid" width="75" height="75">
-              <h4 class="m-t-20 text-c-yellow">Export Your wallet(s)</h4>
-              <button class="btn btn-warning btn-sm btn-round m-t-5" (click)="exportAllWallets()">Export All Wallets</button>
-            </div>
-        </div>
-    </div>
-    <!-- Config Cards End -->
+      <!-- Config Cards Start -->
+      <div class="col-md-12 col-lg-4">
+          <div class="card">
+              <div class="card-block text-center">
+                <h3>Generate A Wallet</h3>
+                <img src="assets/images/wallet.png" class="img-fluid" width="100" height="100">
+                <h4 class="m-t-20">You currently have <span class="text-c-green">{{wallets.length}}</span> wallet(s)</h4>
+                <p class="m-b-20">Enter a password for a new wallet.</p>
+                <input type="password" class="form-control m-b-20 m-t-20" placeholder="Wallet Password" #password>
+                <input type="password" class="form-control m-b-20 m-t-20" placeholder="Confirm Wallet Password" #confirmPassword>
+                <button class="btn btn-primary btn-sm btn-round" (click)="generateWallet(password.value, confirmPassword.value)">Generate Wallet</button>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-12 col-lg-4">
+          <div class="card">
+              <div class="card-block text-center">
+                <h3>Export Wallets</h3>
+                <img src="assets/images/export.png" class="img-fluid" width="75" height="75">
+                <h4 class="m-t-20 text-c-yellow">Export Your wallet(s)</h4>
+                <button class="btn btn-warning btn-sm btn-round m-t-5" (click)="exportAllWallets()">Export All Wallets</button>
+              </div>
+          </div>
+      </div>
+      <!-- Config Cards End -->
+    </ng-template>
 
   </div>
 </div>
