@@ -89,6 +89,15 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 
     // Subscribe to observable isAuthenticated
     this.tokenService.isAuthenticated.subscribe(isAuthenticated => {
+      if(isAuthenticated){
+        // Fetch the data since token was validated with no problem.
+        this.fetchMinerData();
+      } else {
+        // isAuthenticated is false. Wipe the input box and prompt for correct token.
+        this.tokenInput = "";
+      }
+
+      // Update component's value of isAuthenticated
       this.isAuthenticated = isAuthenticated;
     });
 
@@ -240,17 +249,8 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   // Takes in the input token and updates the token service with the value so all
   // observers will see the change
   setToken(tokenIn){
-    // Set the new token and extract the result.
-    this.tokenService.setToken(tokenIn).then((isTokenValid) => {
-      if(isTokenValid){
-        // Fetch the data if the token validated with no problems.
-        this.fetchMinerData();
-      } else {
-        // Invalid token.
-        // Wipe input box and prompt user to input a valid token
-        this.tokenInput = "";
-      }
-    });
+    // Set the new token.
+    this.tokenService.setToken(tokenIn);
   }
 
   // Connect dashboard to miner w/ WebSocketService

@@ -22,22 +22,20 @@ export class TokenService {
   // components will observe the source's value through a proxy variable
   // of the source as an observable
   setToken(tokenIn){
-    return new Promise((resolve, reject) => {
-      // Check if token is valid
-      this.dataService.checkToken(tokenIn).subscribe((res) => {
-        if(res.isValid == true){
-          // Token is valid.
-          // Set global token.
-          this.tokenSource.next(tokenIn);
+    // Check if token is valid
+    this.dataService.checkToken(tokenIn).subscribe((res) => {
+      if(res.isValid == true){
+        // Token is valid.
+        // Set global token.
+        this.tokenSource.next(tokenIn);
 
-          // Set isAuthenticated to true so that dashboard shows
-          this.isAuthenticatedSource.next(true);
+        // Set isAuthenticated to true so that dashboard shows
+        this.isAuthenticatedSource.next(true);
 
-          resolve(true); // Success.
-        } else {
-          resolve(false); // Failed;
-        } 
-      });
+      } else {
+        // Invalid Token.
+        this.isAuthenticatedSource.next(false);
+      } 
     });
 }
 

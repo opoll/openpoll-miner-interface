@@ -32,6 +32,14 @@ export class SettingsComponent implements OnInit {
 
     // Subscribe to observable isAuthenticated
     this.tokenService.isAuthenticated.subscribe(isAuthenticated => {
+      // isAuthenticated is false. Wipe the input box and prompt for correct
+      // auth token
+      if(!isAuthenticated){
+        // Wipe input box and prompt user to input a valid token
+        this.tokenInput = "";
+      }
+
+      // Update component's value of isAuthenticated
       this.isAuthenticated = isAuthenticated;
     });
   }
@@ -39,13 +47,8 @@ export class SettingsComponent implements OnInit {
   // Takes in the input token and updates the token service with the value so all
   // observers will see the change
   setToken(tokenIn){
-    // Set the new token and extract result
-    this.tokenService.setToken(tokenIn).then((isTokenValid) => {
-      if(!isTokenValid){
-        // Wipe input box and prompt user to input a valid token
-        this.tokenInput = "";
-      }
-    });
+    // Set the new token
+    this.tokenService.setToken(tokenIn);
   }
 
   // Takes in the minerType and updates token service so all observers get the change
