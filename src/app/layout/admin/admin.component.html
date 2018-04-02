@@ -178,15 +178,30 @@
         </nav>
         <div class="pcoded-content">
           <div class="pcoded-inner-content">
+
             <!-- Main-body start -->
             <div class="main-body">
               <div class="page-wrapper">
+
+                <!-- Toast Message -->
+                <ng-template [ngIf]="isToastVisible == true">
+                  <div class="alert alert-{{toastClass}} alert-dismissible fade show" role="alert">
+                    <strong>{{toastStrong}}</strong> {{toastMessage}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </ng-template>
+
+                <!-- Page Content-->
                 <router-outlet>
                   <app-title></app-title>
                   <app-breadcrumbs></app-breadcrumbs>
                 </router-outlet>
+
               </div>
-            </div>
+            </div> <!-- Main Body End -->
+
           </div>
         </div>
       </div>

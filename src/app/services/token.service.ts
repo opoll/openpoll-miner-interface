@@ -15,7 +15,7 @@ export class TokenService {
   isAuthenticated = this.isAuthenticatedSource.asObservable();
 
   constructor(private dataService:DataService) {
-    console.log("token service connected");
+    console.log('token service connected');
   }
 
   // Setters that initialize Behaviour Subjects. Other
@@ -35,7 +35,7 @@ export class TokenService {
       } else {
         // Invalid Token.
         this.isAuthenticatedSource.next(false);
-      } 
+      }
     });
 }
 

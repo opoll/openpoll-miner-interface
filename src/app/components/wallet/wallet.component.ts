@@ -11,7 +11,7 @@ import * as R from 'ramda';
 export class WalletComponent implements OnInit {
   // Observed Variables (from TokenService)
   token: string;
-  isAuthenticated:boolean;
+  isAuthenticated: boolean;
 
   // Card data
   balance: number;
@@ -21,7 +21,7 @@ export class WalletComponent implements OnInit {
   wallets: Wallet[];
 
   // Input Box Filler
-  tokenInput = "";
+  tokenInput = '';
 
   constructor(private dataService: DataService, private tokenService: TokenService) {}
 
@@ -38,12 +38,12 @@ export class WalletComponent implements OnInit {
 
     // Subscribe to observable isAuthenticated
     this.tokenService.isAuthenticated.subscribe(isAuthenticated => {
-      if(isAuthenticated){
+      if (isAuthenticated) {
         // Fetch the data since token was validated with no problem.
         this.fetchWalletData();
-      } else{
+      } else {
         // isAuthenticated is false. Wipe the input box and prompt for correct token.
-        this.tokenInput = "";
+        this.tokenInput = '';
       }
 
       // Update component's value of isAuthenticated
@@ -51,9 +51,9 @@ export class WalletComponent implements OnInit {
     });
   }
 
-  generateWallet(password, confirmPassword){
+  generateWallet(password, confirmPassword) {
     // First check to make sure password and confirmPassword match
-    if(password != confirmPassword){
+    if (password !== confirmPassword) {
       // Reissue modal indicating mismatch
 
     }
@@ -65,37 +65,37 @@ export class WalletComponent implements OnInit {
     });
   }
 
-  exportWalletKeys(walletId){
+  exportWalletKeys(walletId) {
     this.dataService.getWalletKeys(walletId, this.token).subscribe((data) => {
       // Download the keys as an arbitrary file type of choice
       console.dir(data.keys);
     });
   }
 
-  exportAllWallets(){
+  exportAllWallets() {
     this.dataService.exportWallets(this.token).subscribe((data) => {
       // Download the wallets as an arbitrary file type of choice
       console.dir(data.wallets);
     });
   }
 
-  withdrawFromWallets(){
-    console.log("Request to withdraw funds for wallet(s)");
+  withdrawFromWallets() {
+    console.log('Request to withdraw funds for wallet(s)');
     this.wallets.forEach(function(wallet) {
       console.log(wallet.id);
     });
   }
 
-  withdrawFromWallet(walletId){
-    console.log("Request to withdraw funds for wallet " + walletId);
+  withdrawFromWallet(walletId) {
+    console.log('Request to withdraw funds for wallet ' + walletId);
   }
 
-  deleteWallet(walletId){
+  deleteWallet(walletId) {
     // Get index of wallet to delete
-    const walletIndex = R.findIndex(R.propEq("id", walletId))(this.wallets);
+    const walletIndex = R.findIndex(R.propEq('id', walletId))(this.wallets);
 
     this.dataService.deleteWallet(walletId, this.token).subscribe((data) => {
-      // Tell user status of deletion 
+      // Tell user status of deletion
       console.dir(data.deletionStatus);
 
       // Remove wallet from view
@@ -108,12 +108,12 @@ export class WalletComponent implements OnInit {
 
   // Takes in the input token and updates the token service with the value so all
   // observers will see the change
-  setToken(tokenIn){
+  setToken(tokenIn) {
     // Set the new token
     this.tokenService.setToken(tokenIn);
   }
 
-  fetchWalletData(){
+  fetchWalletData() {
     // Fetch wallets
     this.dataService.getWalletsInfo(this.token).subscribe((data) => {
       this.wallets = data.wallets;
@@ -126,7 +126,7 @@ export class WalletComponent implements OnInit {
 
 }
 
-function getSumOfAllWallets(wallets){
+function getSumOfAllWallets(wallets) {
   let sum = 0;
   wallets.forEach(function(wallet) {
     sum += wallet.balance;
@@ -134,11 +134,11 @@ function getSumOfAllWallets(wallets){
   return sum;
 }
 
-function convertPOLtoUSD(polVal){
-  return Math.round((polVal/9.987) * 100) / 100;
+function convertPOLtoUSD(polVal) {
+  return Math.round((polVal / 9.987) * 100) / 100;
 }
 
-interface Wallet{
+interface Wallet {
   id: string;
   address: string;
   balance: number;

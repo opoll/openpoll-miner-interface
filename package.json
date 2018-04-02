@@ -28,6 +28,7 @@
     "@swimlane/ngx-datatable": "^11.0.4",
     "@types/socket.io-client": "^1.4.32",
     "angular2-chartjs": "^0.4.1",
+    "angular2-flash-messages": "^2.0.5",
     "angular2-notifications": "^0.9.7",
     "bootstrap": "^4.0.0-beta",
     "c3": "^0.4.18",
