@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class DataService {
@@ -9,16 +9,17 @@ export class DataService {
     console.log('data service connected');
   }
 
-  /* Request for initial pulling of admin info (nodeType and adminAuthToken) as a
-  one time request. */
-  getAdminInfo(){
-    return this.http.get('http://localhost:9011/admin/info')
-      .map(res => res.json());
+
+  // Checks the token passed in and miner app sees if it is valid or not
+  checkToken(token){
+    // Add token that will be checked to object to be added to post
+    // request body
+    const data = {
+      token
+    };
+    return this.http.post(`http://localhost:9011/admin/auth`, data)
+    .map(res => res.json());
   }
-
-
-
-
 
   /****************************************************************/
   /*                  Shard Miner Admin Requests                  */

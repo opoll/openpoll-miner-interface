@@ -1,29 +1,57 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DataService } from './data.service';
+import {ToastService} from './toast.service';
 
 @Injectable()
 export class TokenService {
 
-  private tokenSource = new BehaviorSubject<string>("init token");
+  private tokenSource = new BehaviorSubject<string>("no auth");
   adminAuthToken = this.tokenSource.asObservable();
 
-  private minerTypeSource = new BehaviorSubject<string>("init type");
+  private minerTypeSource = new BehaviorSubject<string>("Shard");
   minerType = this.minerTypeSource.asObservable();
 
-  constructor(private dataService:DataService) { }
+  private isAuthenticatedSource = new BehaviorSubject<boolean>(false);
+  isAuthenticated = this.isAuthenticatedSource.asObservable();
 
-  // Called in app component to initialize Behaviour Subjects. Other
+  constructor(private dataService: DataService, private toastService: ToastService) {
+    console.log('token service connected');
+  }
+
+  // Setters that initialize Behaviour Subjects. Other
   // components will observe the source's value through a proxy variable
   // of the source as an observable
-  initAdminInfo(){
-    this.dataService.getAdminInfo().subscribe((info) => {
-      console.dir(info)
-      this.tokenSource.next(info.adminAuthToken);
-      this.minerTypeSource.next(info.minerType);
-      console.log(this.adminAuthToken, this.minerType)
-      console.log('admin info fetched and sources set')
+  setToken(tokenIn){
+    // Check if token is valid
+    this.dataService.checkToken(tokenIn).subscribe((res) => {
+      if(res.isValid == true){
+        // Token is valid.
+        // Set global token.
+        this.tokenSource.next(tokenIn);
+
+        // Set isAuthenticated to true so that dashboard shows
+        this.isAuthenticatedSource.next(true);
+
+      } else {
+        // Invalid Token.
+        this.isAuthenticatedSource.next(false);
+
+        // Show toast
+        this.toastService.show('danger', 'Unauthorized.',
+          'Please enter a valid admin auth token to gain access to the admin dashboard.', 2);
+      }
     });
+}
+
+  setMinerType(minerType){
+    this.minerTypeSource.next(minerType);
+  }
+
+  // Clears the admin auth token and sets authentication to false
+  wipe(){
+    this.tokenSource.next("no auth");
+    this.isAuthenticatedSource.next(false);
   }
 
 }

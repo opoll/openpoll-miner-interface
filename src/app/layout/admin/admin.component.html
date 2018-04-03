@@ -39,6 +39,14 @@
               </a>
             </li>
           </ul>
+
+          <!-- Toast Message -->
+          <ng-template [ngIf]="isToastVisible == true">
+            <div class="alert alert-{{toastClass}} foreground mt-3" role="alert">
+              <strong>{{toastStrong}}</strong> {{toastMessage}}
+            </div>
+          </ng-template>
+
           <ul [@mobileHeaderNavRight]="navRight" [ngClass]="navRight" class="nav-right">
             <li (clickOutside)="notificationOutsideClick('live')" class="header-notification" [ngClass]="liveNotificationClass" (click)="toggleLiveNotification()">
               <a href="javascript:">
@@ -176,17 +184,23 @@
             </perfect-scrollbar>
           </div>
         </nav>
+
         <div class="pcoded-content">
           <div class="pcoded-inner-content">
+
             <!-- Main-body start -->
             <div class="main-body">
               <div class="page-wrapper">
+
+                <!-- Page Content-->
                 <router-outlet>
                   <app-title></app-title>
                   <app-breadcrumbs></app-breadcrumbs>
                 </router-outlet>
+
               </div>
-            </div>
+            </div> <!-- Main Body End -->
+
           </div>
         </div>
       </div>

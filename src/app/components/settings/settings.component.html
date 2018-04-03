@@ -1,14 +1,46 @@
 <div class="page-body">
   <div class="row">
+    <ng-template [ngIf]="isAuthenticated == false">
+      <!-- Unlock Dashboard Card-->
       <div class="col-md-6 col-xl-3">
-          <div class="card bg-c-grey order-card">
-            <div class="card-block">
-              <h6 class="m-b-20 text-muted">Data Refresh Rate</h6>
-              <h2 class="text-right text-muted"><img class="d-flex align-self-center img-fluid" src="assets/images/refresh.png" width="100" height="100"><span>{{refreshRate}} seconds</span></h2>
-              <input type="text" class="form-control m-b-20 m-t-20" placeholder="New Rate In Seconds" #rate>
-              <button class="btn btn-primary btn-sm btn-round" (click)="changeRefreshRate(rate.value)">Update Refresh Rate</button>
-            </div>
+        <div class="card bg-c-grey order-card">
+          <div class="card-block">
+            <h6 class="m-b-20 text-muted">Authorization Token</h6>
+            <h2 class="text-right text-muted"><img class="d-flex align-self-center img-fluid" src="assets/images/locked.png" width="100" height="100"><span>Not Authenticated</span></h2>
+            <p class="text-right text-muted">Token Can Be Found In The Console</p>
+            <input type="text" class="form-control m-b-20 m-t-20" placeholder="Enter Administrative Token" [value]="tokenInput" #token>
+            <button class="btn btn-primary btn-sm btn-round" (click)="setToken(token.value)">Unlock Admin Dashboard</button>
           </div>
         </div>
+      </div>
+      <!-- End Unlock Dashboard Card-->
+    </ng-template>
+    <ng-template [ngIf]="isAuthenticated == true">
+      <!-- Lock Dashboard Card-->
+      <div class="col-md-6 col-xl-3">
+        <div class="card bg-c-grey order-card">
+          <div class="card-block">
+            <h6 class="m-b-20 text-muted">Authorization Token</h6>
+            <img class="d-flex align-self-center img-fluid" src="assets/images/unlocked.png" width="100" height="100">
+            <h2 class="text-right text-muted mt-3">Authenticated</h2>
+            <button class="btn btn-danger btn-sm btn-round pull-right mt-2" (click)="lockDashboard()">Lock Dashboard</button>
+          </div>
+        </div>
+      </div>
+      <!-- End Lock Dashboard Card-->
+      
+      <!-- Set Miner Type Card-->
+    <div class="col-md-6 col-xl-3">
+        <div class="card bg-c-grey order-card">
+          <div class="card-block">
+            <h6 class="m-b-20 text-muted">Switch Miner Type</h6>
+            <img class="d-flex align-self-center img-fluid" src="assets/images/minertype.png" width="200" height="200">
+            <p class="text-right text-muted">Current Type: <span><h2>{{minerType}}</h2></span></p>
+            <button class="btn btn-primary btn-sm btn-round pull-right mt-2" (click)="setMinerType()">Switch Types</button>
+          </div>
+        </div>
+      </div>
+      <!-- End Set Miner Type Card-->
+    </ng-template>
   </div>
 </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {animate, AUTO_STYLE, state, style, transition, trigger} from '@angular/animations';
 import {MenuItems} from '../../shared/menu-items/menu-items';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-admin',
@@ -119,7 +120,35 @@ export class AdminComponent implements OnInit {
 
   public config: any;
 
-  constructor(public menuItems: MenuItems) {
+  // Custom Variables that are subscribed to so any component can set
+  // the toast through the toast service
+  public isToastVisible: boolean;
+  public toastClass: string;
+  public toastStrong: string;
+  public toastMessage: string;
+
+  constructor(public menuItems: MenuItems, public toastService: ToastService) {
+    // Subscribe to toast message visibility
+    this.toastService.isToastVisible.subscribe(visibility => {
+      this.isToastVisible = visibility;
+    });
+
+    // Subscribe to toast message class
+    this.toastService.toastClass.subscribe(clazz => {
+      this.toastClass = clazz;
+    });
+
+    // Subscribe to toast message bolded text
+    this.toastService.toastStrong.subscribe(strongText => {
+      this.toastStrong = strongText;
+    });
+
+    // Subscribe to toast message main message
+    this.toastService.toastMessage.subscribe(toastMessage => {
+      this.toastMessage = toastMessage;
+    });
+
+    // Setting view variables
     this.navType = 'st2';
     this.themeLayout = 'vertical';
     this.verticalPlacement = 'left';
