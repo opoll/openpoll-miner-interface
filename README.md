@@ -2,7 +2,11 @@
 
 **Purpose:** The miner interface is an Angular 5 frontend Single Page Application (SPA) that provides miners access to the underlying functionality and elements of the mining app that will allow them to perform their mining tasks, monitor critical metrics, and manage their wallets. This page will outline the basic endpoints (at least for now) that the mining application will contain to respond to frontend events. Endpoints will be prefaced by '/admin/' and be secured by a token.
 
-# Temporary Frontend Layout
+# Frontend Layout
+
+**Locked (no token entered yet)**
+
+![](https://static.notion-static.com/9a61a862-82c0-4211-ab87-1ab8149b256a/screencapture-localhost-4200-settings-2018-04-02-20_22_28.png)
 
 **Home Dashboard (Shard Mining Tab)**
 
@@ -20,9 +24,7 @@
 
 **Settings**
 
-**Note:** Past the initial data fetch to populate the dashboard (which happens through token secured http communication), the Angular interface will be updated with WebSocket communication (secured by the same token used for the initial population of the dashboard). Therefore the "Data Refresh Rate" you see will likely change and not be necessary.
-
-![](https://static.notion-static.com/1bf3389e-71cf-490f-abcb-0351b0e28d80/screencapture-localhost-4200-settings-2018-03-16-13_20_49.png)
+![](https://static.notion-static.com/2960a0f5-473b-405a-b5ca-a15aad1455db/screencapture-localhost-4200-settings-2018-04-02-20_24_06.png)
 
 **Repo:** [https://github.com/opoll/openpoll-miner-interface](https://github.com/opoll/openpoll-miner-interface)
 
@@ -30,15 +32,22 @@
 
 # Token Authentication
 
-When the Angular app is first served to the client the server will generate and store a token called `adminAuthToken` in LevelDb. Upon the Angular application being served it will ask the miner for the token generated like so:
+When the Angular app is first served to the client the server will generate and store a token called `adminAuthToken` in LevelDb. The toke will be generated like so:
 
     Base64( random_alphanumeric(32) + ";" + Miner_IPAddress + ";" + Miner_Port )
 
-This token will be be printed to the CLI and embedded in the Angular application upon it being served. The way admin token authentication will work is that every time that the Angular application want's to execute an action (interact with the miner's underlying mining application instance), they will pass the token along with the request. There will be middleware on every endpoint checking for this token and comparing it against what the mining application instance holds in LevelDb.
+Progress goes as follows:
 
-If invalid the mining application will reject the request with a `401 Unauthorized` status code (this will never happen to the actual miner using their dashboard since they will have the correct token at all times). If valid the miner will respond normally with the data the Angular app desires.
+1. User loads miner application
+1. Miner application checks leveldb for auth token (the token itself, not the base64 containing the IP and Port, just the code). if one exists, it uses that one. if none exists, it generates a new code and stores it.
+1. Miner generates an authorization code which is `token;ip;port` base64'd and then prints this to console. this code can by copy-pasted into the angular GUI to access the miner.
+1. Angular GUI sends the token as the authorization in all requests.
 
-When the mining application is shutdown no action needs to take place with tokens since every new launch of the mining application will result in a new `adminAuthToken` server-side and consequently a new token to what is served to the client.
+At no point in the flow is there automatic authorization. The angular app stores the token locally and during first launch, the user will have to get the token / authorization code from the console to access the admin interface.
+
+This token will be be printed to the CLI and embedded in the Angular application upon it being served.
+
+If invalid the mining application will reject the request with a `401 Unauthorized` status code (this will never happen to the actual miner using their dashboard since they will know/have the correct token at all times). If valid the miner will respond normally with the data the Angular app desires.
 
 The `adminAuthToken` will consist of a 32 byte hex string concatenated with the miner's address as well as the port of communication (each element separated by a semicolon ";")
 
@@ -99,9 +108,11 @@ And the mining application middleware will validate the header like so:
 
 # Endpoints
 
-GET `/admin/info`
+Non-Restriceted Admin Endpoints
 
-Non-Token Restricted Once-Valid Endpoint for serving Angular Interface `adminAuthToken` and `minerType` on Angular app's spawn. Shuts down afterwards therefore only runs upon the creation of a mining application instance.
+**POST** `/admin/auth`
+
+Checks whether the `token` value passed in the request body is a valid admin auth token. This endpoint is limited to `TOKEN_CHECK_LIMIT` tries to prevent a brute forcing of the token.
 
 ## Shard Status Endpoints
 
@@ -212,3 +223,9 @@ Request to create a new wallet. If token is valid and password as well as confir
     			balance: 0 // Wallet balance in POL
     	}
     }
+
+# WebSocket Communications
+
+In order to keep the dashboard data live and fresh, the miner will be emitting websocket events with the appropriate data for the event.
+
+## Events
