@@ -14,6 +14,7 @@ import { DataService } from './services/data.service';
 import { TokenService } from './services/token.service';
 import { WebSocketService } from './services/web-socket.service';
 import { EventService } from './services/event.service';
+import { ToastService } from './services/toast.service';
 
 import { HttpModule } from '@angular/http';
 
@@ -35,7 +36,8 @@ import { HttpModule } from '@angular/http';
     DataService,
     TokenService,
     WebSocketService,
-    EventService
+    EventService,
+    ToastService
   ],
   bootstrap: [AppComponent]
 })

@@ -138,6 +138,18 @@
               </div>
           </div>
       </div>
+      <div class="col-md-12 col-lg-4">
+        <div class="card">
+          <div class="card-block text-center">
+            <h3>Export Area</h3>
+            <img src="assets/images/json.png" class="img-fluid" width="75" height="75">
+            <h5 class="my-1">Exported wallet/key data will appear here.</h5>
+            <p class="my-1">Delete data when finished extracting.</p>
+            <button class="btn btn-danger btn-sm btn-round my-1" (click)="clearOutput()">Clear Data</button>
+            <p class="my-1"><strong>{{exportOutput}}</strong></p>
+          </div>
+        </div>
+      </div>
       <!-- Config Cards End -->
     </ng-template>
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TokenService } from '../../services/token.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-settings',
@@ -10,14 +11,16 @@ import { TokenService } from '../../services/token.service';
 export class SettingsComponent implements OnInit {
 
   // Observed Variables (from TokenService)
-  token:string;
-  minerType:string;
-  isAuthenticated:boolean;
+  token: string;
+  minerType: string;
+  isAuthenticated: boolean;
 
   // Input Box Filler
-  tokenInput = "";
+  tokenInput = '';
 
-  constructor(private dataService: DataService, private tokenService: TokenService) {}
+  constructor(private dataService: DataService,
+              private tokenService: TokenService,
+              private toastService: ToastService) {}
 
   ngOnInit() {
     // Subscribe to observable admin auth token
@@ -34,9 +37,9 @@ export class SettingsComponent implements OnInit {
     this.tokenService.isAuthenticated.subscribe(isAuthenticated => {
       // isAuthenticated is false. Wipe the input box and prompt for correct
       // auth token
-      if(!isAuthenticated){
+      if(!isAuthenticated) {
         // Wipe input box and prompt user to input a valid token
-        this.tokenInput = "";
+        this.tokenInput = '';
       }
 
       // Update component's value of isAuthenticated
@@ -52,8 +55,8 @@ export class SettingsComponent implements OnInit {
   }
 
   // Takes in the minerType and updates token service so all observers get the change
-  setMinerType(minerType){
-    if(minerType == "Shard"){
+  setMinerType() {
+    if(this.minerType == "Shard"){
       this.tokenService.setMinerType("Mainchain");
     } else {
       this.tokenService.setMinerType("Shard");
@@ -61,8 +64,13 @@ export class SettingsComponent implements OnInit {
   }
 
   // Lock the dashboard and destroy the admin auth token
-  lockDashboard(){
+  lockDashboard() {
+    // Wipe auth to lock dashboard
     this.tokenService.wipe();
+
+    // Display success toast
+    this.toastService.show('success', 'Dashboard Locked.', 'Admin dashboard has successfully been locked.', 3);
+
   }
 
 }

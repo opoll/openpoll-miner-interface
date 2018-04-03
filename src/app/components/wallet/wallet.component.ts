@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { TokenService } from '../../services/token.service';
+import {ToastService} from '../../services/toast.service';
 import * as R from 'ramda';
 
 @Component({
@@ -23,7 +24,12 @@ export class WalletComponent implements OnInit {
   // Input Box Filler
   tokenInput = '';
 
-  constructor(private dataService: DataService, private tokenService: TokenService) {}
+  // Export text area
+  exportOutput = 'Data Will Appear Here';
+
+  constructor(private dataService: DataService,
+              private tokenService: TokenService,
+              private toastService: ToastService) {}
 
   ngOnInit() {
     // Placeholder Data
@@ -55,27 +61,35 @@ export class WalletComponent implements OnInit {
     // First check to make sure password and confirmPassword match
     if (password !== confirmPassword) {
       // Reissue modal indicating mismatch
-
+      this.toastService.show('danger', 'Mismatched Passwords.', 'Confirm password and password do not match.', 3);
+      return;
     }
 
     // Execute request to add wallet using provided password
     this.dataService.addWallet(password, this.token).subscribe((data) => {
       // Add the returned wallet to the view if wallet creation is successful
       this.wallets.push(data.wallet);
+      this.toastService.show('success', 'Wallet Added.', `New wallet with address ${data.wallet.address} added!`, 4);
     });
   }
 
   exportWalletKeys(walletId) {
     this.dataService.getWalletKeys(walletId, this.token).subscribe((data) => {
-      // Download the keys as an arbitrary file type of choice
-      console.dir(data.keys);
+      // Put data in display area for extraction
+      this.exportOutput = JSON.stringify(data.keys, null, '\t');
+
+      // Toast
+      this.toastService.show('success', 'Keys Exported.', `Keys for wallet with ${walletId} exported. You may access them below.`, 6);
     });
   }
 
   exportAllWallets() {
     this.dataService.exportWallets(this.token).subscribe((data) => {
-      // Download the wallets as an arbitrary file type of choice
-      console.dir(data.wallets);
+      // Put data in display area for extraction
+      this.exportOutput = JSON.stringify(data.wallets, null, '\t');
+
+      // Toast
+      this.toastService.show('success', 'Wallets Exported.', `You may access them in the output area below.`, 6);
     });
   }
 
@@ -93,6 +107,7 @@ export class WalletComponent implements OnInit {
   deleteWallet(walletId) {
     // Get index of wallet to delete
     const walletIndex = R.findIndex(R.propEq('id', walletId))(this.wallets);
+    const walletAddress = this.wallets[walletIndex].address;
 
     this.dataService.deleteWallet(walletId, this.token).subscribe((data) => {
       // Tell user status of deletion
@@ -101,6 +116,8 @@ export class WalletComponent implements OnInit {
       // Remove wallet from view
       this.wallets.splice(walletIndex, 1);
 
+      // Toast
+      this.toastService.show('success', 'Wallet Deleted.', `Wallet with address ${walletAddress} deleted.`, 5);
     });
   }
 
@@ -122,6 +139,10 @@ export class WalletComponent implements OnInit {
       this.balance = getSumOfAllWallets(this.wallets);
       this.balanceInDollars = convertPOLtoUSD(this.balance);
     });
+  }
+
+  clearOutput(){
+    this.exportOutput = 'Data Will Appear Here';
   }
 
 }

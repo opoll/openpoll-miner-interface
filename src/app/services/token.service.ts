@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DataService } from './data.service';
+import {ToastService} from './toast.service';
 
 @Injectable()
 export class TokenService {
@@ -14,7 +15,7 @@ export class TokenService {
   private isAuthenticatedSource = new BehaviorSubject<boolean>(false);
   isAuthenticated = this.isAuthenticatedSource.asObservable();
 
-  constructor(private dataService:DataService) {
+  constructor(private dataService: DataService, private toastService: ToastService) {
     console.log('token service connected');
   }
 
@@ -35,6 +36,10 @@ export class TokenService {
       } else {
         // Invalid Token.
         this.isAuthenticatedSource.next(false);
+
+        // Show toast
+        this.toastService.show('danger', 'Unauthorized.',
+          'Please enter a valid admin auth token to gain access to the admin dashboard.', 2);
       }
     });
 }

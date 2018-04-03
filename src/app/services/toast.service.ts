@@ -28,9 +28,16 @@ export class ToastService {
   private toastMessageSource = new BehaviorSubject<string>('Main Message');
   toastMessage = this.toastMessageSource.asObservable();
 
+  private TOAST_DURATION = 3000;
+
   constructor() { }
 
-  showToast(clazz, boldText, mainText) {
+  // Show the toast with custom values passed in set
+  // class -> toast class
+  // boldText -> bolded text that starts the toast message
+  // mainText -> main text of the toast message
+  // duration -> duration of the toast in seconds
+  show(clazz, boldText, mainText, duration) {
     // Set Class
     this.setClass(clazz);
 
@@ -42,6 +49,11 @@ export class ToastService {
 
     // Show toast
     this.setToastVisibility(true);
+
+    // Set visibility back to false after TOAST_DURATION
+    setTimeout(() => {
+      this.setToastVisibility(false);
+    }, duration * 1000);
   }
 
   // Set toast's visibility
