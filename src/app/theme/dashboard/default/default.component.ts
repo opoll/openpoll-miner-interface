@@ -228,17 +228,10 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 
   /********************* Mainchain OnClick Functions ***********************/
 
-  importMainchain() {
-    console.log('Request to import mainchain.');
-
-    // Toast
-    this.toastService.show('success', 'Mainchain Imported.', `The mainchain has been successfully imported`, 5);
-  }
-
   startMainchain() {
     this.dataService.startMainchain(this.token).subscribe((data) => {
       // Toggle chain state on success
-      console.dir(data.message);
+      this.mainchainInfo.status = 'Active';
 
       // Toast
       this.toastService.show('success', 'Mainchain Started.', `Mainchain mining has been successfully started.`, 5);
@@ -248,7 +241,7 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   pauseMainchain() {
     this.dataService.pauseMainchain(this.token).subscribe((data) => {
       // Toggle chain state on success
-      console.dir(data.message);
+      this.mainchainInfo.status = 'Paused';
 
       // Toast
       this.toastService.show('warning', 'Mainchain Paused.', `Mainchain mining has been successfully paused.`, 5);
@@ -275,7 +268,19 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   /*************************************************************************/
 
   switchMinerType() {
-    console.log('Request to switch miner type. Current type is ' + this.minerType);
+    if(this.minerType == "Shard"){
+      // Change type
+      this.tokenService.setMinerType("Mainchain");
+
+      // Toast
+      this.toastService.show('success', 'Mining Status: Mainchain', `Mining type successfully changed to type 'Mainchain'`, 5);
+    } else {
+      // Change Type
+      this.tokenService.setMinerType("Shard");
+
+      // Toast
+      this.toastService.show('success', 'Mining Status: Shard', `Mining type successfully changed to type 'Shard'`, 5);
+    }
   }
 
   // Takes in the input token and updates the token service with the value so all
