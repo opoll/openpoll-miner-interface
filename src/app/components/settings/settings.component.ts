@@ -57,9 +57,17 @@ export class SettingsComponent implements OnInit {
   // Takes in the minerType and updates token service so all observers get the change
   setMinerType() {
     if(this.minerType == "Shard"){
+      // Change type
       this.tokenService.setMinerType("Mainchain");
+
+      // Toast
+      this.toastService.show('success', 'Mining Status: Mainchain', `Mining type successfully changed to type 'Mainchain'`, 5);
     } else {
+      // Change Type
       this.tokenService.setMinerType("Shard");
+
+      // Toast
+      this.toastService.show('success', 'Mining Status: Shard', `Mining type successfully changed to type 'Shard'`, 5);
     }
   }
 
