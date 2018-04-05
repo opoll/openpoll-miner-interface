@@ -51,43 +51,48 @@
             <li (clickOutside)="notificationOutsideClick('live')" class="header-notification" [ngClass]="liveNotificationClass" (click)="toggleLiveNotification()">
               <a href="javascript:">
                 <i class="ti-bell"></i>
-                <span class="badge bg-c-pink"></span>
+                <ng-template [ngIf]="unreadNotificationsExist == true">
+                  <span class="badge bg-c-pink"></span>
+                </ng-template>
               </a>
               <ul [@notificationBottom]="liveNotification" class="show-notification">
                 <li>
                   <h6>Notifications</h6>
-                  <label class="label label-danger">New</label>
+                  <ng-template [ngIf]="unreadNotificationsExist == true">
+                    <label class="label label-danger">New</label>
+                  </ng-template>
                 </li>
-                <li>
-                  <div class="media">
-                    <img class="d-flex align-self-center img-radius" src="assets/images/shard.png" alt="Generic placeholder image">
-                    <div class="media-body">
-                      <h5 class="notification-user">Shard 0x23af69fa526bbf12372e</h5>
-                      <p class="notification-msg">Stale response pool. Force fetch or turn on response auto-fetching.</p>
-                      <span class="notification-time">30 minutes ago</span>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="media">
-                    <img class="d-flex align-self-center img-radius" src="assets/images/mainchain.png" alt="Generic placeholder image">
-                    <div class="media-body">
-                      <h5 class="notification-user">Mainchain Notification</h5>
-                      <p class="notification-msg">Mainchain mempool fully updated 23m ago.</p>
-                      <span class="notification-time">30 minutes ago</span>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="media">
-                    <img class="d-flex align-self-center img-radius" src="assets/images/shard.png" alt="Generic placeholder image">
-                    <div class="media-body">
-                      <h5 class="notification-user">Shard 0xfa526bbf123af69fa23</h5>
-                      <p class="notification-msg">Block mined! Broadcasting block to network.</p>
-                      <span class="notification-time">30 minutes ago</span>
-                    </div>
-                  </div>
-                </li>
+
+                <ng-template [ngIf]="isAuthenticated == false">
+                  <li>
+                    <h6>Unauthenticated. Notifications cannot be viewed.</h6>
+                  </li>
+                </ng-template>
+
+                <ng-template [ngIf]="isAuthenticated == true">
+
+                  <ng-template [ngIf]="notifications.length === 0">
+                    <li>
+                      <h6>No New Notifications! 🎉🎉🎉</h6>
+                    </li>
+                  </ng-template>
+
+                  <ng-template [ngIf]="notifications.length !== 0">
+                    <!-- ngFor notifications array-->
+                    <li *ngFor="let notification of notifications;">
+                      <div class="media">
+                        <img class="d-flex align-self-center img-radius" src="assets/images/{{notification.type}}.png" alt="Generic placeholder image">
+                        <div class="media-body">
+                          <h5 class="notification-user">{{notification.title}}</h5>
+                          <p class="notification-msg">{{notification.message}}</p>
+                          <span class="notification-time">{{notification.dateCreated}}</span>
+                        </div>
+                      </div>
+                    </li>
+                  </ng-template>
+
+                </ng-template>
+
               </ul>
             </li>
           </ul>
