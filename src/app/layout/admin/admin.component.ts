@@ -239,6 +239,8 @@ export class AdminComponent implements OnInit {
       this.isAuthenticated = isAuthenticated;
     });
 
+    // TODO: Make the dates display as human readable dates like "30 minutes ago" or "5 seconds ago" and recalculate everytime the drawer opens
+    // TODO: When notifications overflow let it say "see more" or just make the whole panel scrollable so it doesn't cutoff notifications
     // Hook the admin component to event data that will yield notifications
     this.eventService.eventData.subscribe(eventData => {
       // If the event is a new notification perform correct action
