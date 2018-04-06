@@ -68,8 +68,8 @@ export class DefaultComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     // Placeholder values
-    this.hashrate = 11;
-    this.netAvgHashrate = 8;
+    this.hashrate = 0;
+    this.netAvgHashrate = 0;
     this.chainEntries = [];
     this.avaliableShards = [];
     this.totalActive = 0;
@@ -268,15 +268,15 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   /*************************************************************************/
 
   switchMinerType() {
-    if(this.minerType == "Shard"){
+    if (this.minerType == 'Shard') {
       // Change type
-      this.tokenService.setMinerType("Mainchain");
+      this.tokenService.setMinerType('Mainchain');
 
       // Toast
       this.toastService.show('success', 'Mining Status: Mainchain', `Mining type successfully changed to type 'Mainchain'`, 5);
     } else {
       // Change Type
-      this.tokenService.setMinerType("Shard");
+      this.tokenService.setMinerType('Shard');
 
       // Toast
       this.toastService.show('success', 'Mining Status: Shard', `Mining type successfully changed to type 'Shard'`, 5);
@@ -295,8 +295,79 @@ export class DefaultComponent implements OnInit, AfterViewInit {
   hookWebsocket() {
     // Subscribe to any event data coming through
     this.eventService.eventData.subscribe(eventData => {
+      // If eventData has a shardId on it get the index of the shard
+      // in chainEntries that will be manipulated. Otherwise a shardIndex
+      // won't be set or necessary since the event won't require it
+      let shardIndex;
+      if (eventData.shardId) {
+        shardIndex = getEntryIndexById('id', eventData.shardId, this.chainEntries);
+      }
+
       // Update the dashboard with the data that comes through
-      console.log(eventData);
+      switch (eventData.event) {
+
+        case 'shardBlockAdded':
+          // Increment the appropriate shard's height
+          this.chainEntries[shardIndex].height++;
+          break;
+
+        case 'shardResponseAdded':
+          // Increment the appropriate shard's response pool size
+          this.chainEntries[shardIndex].respPoolSize++;
+          break;
+
+        case 'shardResponseRemoved':
+          // Decrement the appropriate shard's response pool size
+          this.chainEntries[shardIndex].respPoolSize--;
+          break;
+
+        case 'shardResponseChange':
+          // Set the appropriate shard's response pool size to the new size
+          this.chainEntries[shardIndex].respPoolSize = eventData.pendingRespCount;
+          break;
+
+        case 'mainchainBlockAdded':
+          // Increment mainchain height
+          this.mainchainInfo.height++;
+          break;
+
+        case 'pendingShardAdded':
+          // TODO: Confirm this later
+          console.log('A pending shard has been added');
+          break;
+
+        case 'pendingShardRemoved':
+          // TODO: Confirm this later
+          console.log('A pending shard has been removed');
+          break;
+
+        case 'pendingShardCountChange':
+          // TODO: Confirm this later
+          console.log(`The pending shard count has changed to ${eventData.pendingShardCount} pending shards.`);
+          break;
+
+        case 'pendingTxnAdded':
+          // TODO: Confirm this later
+          console.log('A pending transaction has been added');
+          break;
+
+        case 'pendingTxnRemoved':
+          // TODO: Confirm this later
+          console.log('A pending transaction has been removed');
+          break;
+
+        case 'pendingTxnCountChange':
+          // TODO: Confirm this later
+          console.log(`The pending transaction count has changed to ${eventData.pendingTxnCount} pending transactions.`);
+          break;
+
+        case 'hashrateChange':
+          this.hashrate = eventData.newHashrate; // Update to new hashrate
+          break;
+
+        default:
+          console.log(`The event ${eventData.event} does not have a handler`);
+      }
     });
   }
 

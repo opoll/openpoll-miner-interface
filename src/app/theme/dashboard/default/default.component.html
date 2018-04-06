@@ -24,10 +24,10 @@
             <h6 class="m-b-20 text-muted">Miner Type</h6>
             <h2 class="text-right text-muted"><img class="d-flex align-self-center img-radius img-fluid" src="assets/images/pick.png" width="100" height="100"><span>{{minerType}}</span></h2>
             <ng-template [ngIf]="minerType == 'Shard'">
-                <p class="m-b-0 text-muted"><span class="label label-danger" (click)="switchMinerType()">Switch To Mainchain</span></p>
+                <p class="m-b-0 text-muted"><span class="label label-danger cursor" (click)="switchMinerType()">Switch To Mainchain</span></p>
             </ng-template>
             <ng-template [ngIf]="minerType == 'Mainchain'">
-                <p class="m-b-0 text-muted"><span class="label label-danger" (click)="switchMinerType()">Switch To Shard</span></p>
+                <p class="m-b-0 text-muted"><span class="label label-danger cursor" (click)="switchMinerType()">Switch To Shard</span></p>
             </ng-template>
           </div>
         </div>
@@ -106,16 +106,16 @@
                               <td><span [ngClass]="{'label': true, 'label-success': entry.status == 'Active', 'label-warning': entry.status == 'Paused',
                                 'label-primary': entry.status == 'Awaiting Responses', 'label-danger': entry.status == 'Failed'}">{{entry.status}}</span></td>
                               <div *ngIf="entry.status === 'Active'">
-                                  <td><span class="label label-warning" (click)="pauseShard(entry.id)">Pause</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                                  <td><span class="label label-warning cursor" (click)="pauseShard(entry.id)">Pause</span> <span class="label label-danger cursor" (click)="deleteShard(entry.id)">Delete</span></td>
                               </div>
                               <div *ngIf="entry.status === 'Paused'">
-                                  <td><span class="label label-success" (click)="startShard(entry.id)">Start</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                                  <td><span class="label label-success cursor" (click)="startShard(entry.id)">Start</span> <span class="label label-danger cursor" (click)="deleteShard(entry.id)">Delete</span></td>
                               </div>
                               <div *ngIf="entry.status === 'Awaiting Responses'">
-                                  <td><span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                                  <td><span class="label label-danger cursor" (click)="deleteShard(entry.id)">Delete</span></td>
                               </div>
                               <div *ngIf="entry.status === 'Failed'">
-                                  <td><span class="label label-primary" (click)="reviveShard(entry.id)">Revive</span> <span class="label label-danger" (click)="deleteShard(entry.id)">Delete</span></td>
+                                  <td><span class="label label-primary cursor" (click)="reviveShard(entry.id)">Revive</span> <span class="label label-danger cursor" (click)="deleteShard(entry.id)">Delete</span></td>
                               </div>
                             </tr>
                           </table>
@@ -144,7 +144,7 @@
                                 <td>{{shardInfo.numMiners}}</td>
                                 <td>{{shardInfo.difficulty}}</td>
                                 <td>{{shardInfo.pollName}}</td>
-                                <td><span class="label label-primary" (click)="importShard(shardInfo.pollHash)">Import Shard</span></td>
+                                <td><span class="label label-primary cursor" (click)="importShard(shardInfo.pollHash)">Import Shard</span></td>
                               </tr>
                             </table>
                           </div>
@@ -172,13 +172,13 @@
                             <td><span [ngClass]="{'label': true, 'label-success': mainchainInfo.status == 'Active', 'label-warning': mainchainInfo.status == 'Paused',
                               'label-danger': mainchainInfo.status == 'Failed'}">{{mainchainInfo.status}}</span></td>
                             <div *ngIf="mainchainInfo.status === 'Active'">
-                                <td><span class="label label-warning" (click)="pauseMainchain()">Pause</span> <span class="label label-danger" (click)="deleteMainchain()">Delete</span></td>
+                                <td><span class="label label-warning cursor" (click)="pauseMainchain()">Pause</span> <span class="label label-danger cursor" (click)="deleteMainchain()">Delete</span></td>
                             </div>
                             <div *ngIf="mainchainInfo.status === 'Paused'">
-                                <td><span class="label label-success" (click)="startMainchain()">Start</span> <span class="label label-danger" (click)="deleteMainchain()">Delete</span></td>
+                                <td><span class="label label-success cursor" (click)="startMainchain()">Start</span> <span class="label label-danger cursor" (click)="deleteMainchain()">Delete</span></td>
                             </div>
                             <div *ngIf="mainchainInfo.status === 'Failed'">
-                                <td><span class="label label-primary" (click)="reviveMainchain()">Revive</span> <span class="label label-danger" (click)="deleteMainchain()">Delete</span></td>
+                                <td><span class="label label-primary cursor" (click)="reviveMainchain()">Revive</span> <span class="label label-danger cursor" (click)="deleteMainchain()">Delete</span></td>
                             </div>
                           </tr>
                         </table>

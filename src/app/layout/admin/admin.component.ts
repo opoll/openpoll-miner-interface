@@ -200,6 +200,9 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Placeholder values
+    this.notifications = [];
+
     // Subscribe to toast message visibility
     this.toastService.isToastVisible.subscribe(visibility => {
       this.isToastVisible = visibility;
@@ -459,6 +462,7 @@ export class AdminComponent implements OnInit {
     this.headerFixedMargin = this.isHeaderChecked === true ? '56px' : '';
   }
 
+  // Fetch the notifications from the miner and set the notifications array
   fetchNotifications() {
     // Fetch the notifications
     this.dataService.getNotifications(this.token).subscribe((data) => {
@@ -472,6 +476,52 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  // Delete a notification that has a specified ID
+  deleteNotification(targetId) {
+
+    this.dataService.deleteNotification(targetId, this.token).subscribe((result) => {
+      // Refetch notifications updated to update GUI
+      this.fetchNotifications();
+
+      // Toast
+      this.toastService.show('success', 'Success! Notification deleted.', '', 4);
+    });
+
+  }
+
+  // Delete a set of notifications that fall behind a epoch date
+  deleteNotifications(cutoffInHours) {
+    const cutoffInSeconds = hoursToSeconds(cutoffInHours);
+    const cutoffEpoch = nowAsEpoch() - cutoffInSeconds;
+
+    this.dataService.deleteNotifications(cutoffEpoch, this.token).subscribe((result) => {
+      // Refetch notifications updated to update GUI
+      this.fetchNotifications();
+
+      // Determine toast mainText
+      let mainText;
+      if (result.numDeleted === 1) {
+        mainText = '1 notification deleted from the queue.';
+      } else {
+        mainText = `${result.numDeleted} notifications deleted from the queue.`;
+      }
+
+      // Toast
+      this.toastService.show('success', 'Success!', mainText, 4);
+    });
+
+  }
+
+}
+
+// Converts a value in hours to seconds
+function hoursToSeconds(hours) {
+  return hours * 60 * 60; // hours -> minutes -> seconds
+}
+
+// Returns the current epoch time
+function nowAsEpoch() {
+  return Math.floor((new Date).getTime() / 1000);
 }
 
 function sortByDate(notifArray) {

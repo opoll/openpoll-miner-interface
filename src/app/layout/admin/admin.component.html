@@ -73,17 +73,25 @@
 
                   <ng-template [ngIf]="notifications.length === 0">
                     <li>
-                      <h6>No New Notifications! 🎉🎉🎉</h6>
+                      <h6>🎉🎉🎉 No New Notifications! 🎉🎉🎉</h6>
                     </li>
                   </ng-template>
 
                   <ng-template [ngIf]="notifications.length !== 0">
+                    <div class="text-center">
+                      <button class="btn btn-danger btn-sm btn-round" (click)="deleteNotifications(2)">Clear Old Notifications (From 2+ Hours Ago)</button>
+                    </div>
                     <!-- ngFor notifications array-->
                     <li *ngFor="let notification of notifications;">
                       <div class="media">
                         <img class="d-flex align-self-center img-radius" src="assets/images/{{notification.type}}.png" alt="Generic placeholder image">
                         <div class="media-body">
-                          <h5 class="notification-user">{{notification.title}}</h5>
+                          <h5 class="notification-user">
+                            {{notification.title}}
+                            <span class="f-right">
+                              <p class="text-muted cursor" (click)="deleteNotification(notification.id)">X</p>
+                            </span>
+                          </h5>
                           <p class="notification-msg">{{notification.message}}</p>
                           <span class="notification-time">{{notification.dateCreated}}</span>
                         </div>

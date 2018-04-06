@@ -148,17 +148,17 @@ export class DataService {
   /*                       General Requests                      */
   /***************************************************************/
 
-  getNotifications(token){
+  getNotifications(token) {
     const httpOptions = this.getAuthHttpOptions(token);
     return this.get(`/admin/notifications`, httpOptions);
   }
 
-  deleteNotification(notificationId, token){
+  deleteNotification(notificationId, token) {
     const httpOptions = this.getAuthHttpOptions(token);
     return this.delete(`/admin/notifications/${notificationId}`, httpOptions);
   }
 
-  deleteNotifications(cutoffEpoch, token){
+  deleteNotifications(cutoffEpoch, token) {
     const httpOptions = this.getAuthHttpOptions(token);
     return this.delete(`/admin/notifications?cutoff=${cutoffEpoch}`, httpOptions);
   }
