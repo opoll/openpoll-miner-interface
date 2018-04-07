@@ -224,8 +224,45 @@ Request to create a new wallet. If token is valid and password as well as confir
     	}
     }
 
+## Other Endpoints
+
+**GET** `/admin/notifications`
+
+Gets all of the miner's notifications. Notifications will be emitted from the event factory upon a calling module using the sendNotification method.
+
+**DELETE** `/admin/notifications?cutoff={cutoffEpochDate}`
+
+Deletes all notifications falling behind a specified `cutOff` epoch date.
+
+**DELETE** `/admin/notifications/{notificationId}`
+
+Deletes a specific `notificationId` passed in as a path parameter
+
 # WebSocket Communications
 
-In order to keep the dashboard data live and fresh, the miner will be emitting websocket events with the appropriate data for the event.
+In order to keep the dashboard data live and fresh, the miner will be emitting websocket events with the appropriate data for the event. The miner will simply be using the `eventFactory` module that abstracts away the actual event names and boilerplate websocket code to make the event emission work.
 
-## Events
+Here are some events that are covered by the eventFactory module currently:
+
+## **Notification Object**
+
+When calling the `sendNotification` method a programmer should pass in a JS object formatted like so:
+
+    the notification someone will pass in is in this format
+    {
+    	type: string; // Either "shard", "mainchain", or "general"
+      title: string; // The notification's title
+      message: string; // The notification's message
+    }
+
+The real notification object looks like this in the db:
+
+    {
+      id: string; // Random 8 byte hexadecimal ID
+      type: string; // Either "shard", "mainchain", or "general"
+      title: string; // The notification's title
+      message: string; // The notification's message
+      dateCreated: number; // Epoch date the notification was created
+    }
+
+But the `sendNotification` function takes care of time-stamping the notification (`dateCreated`) as well as assigning it an id (`id`) for record keeping purposes.
