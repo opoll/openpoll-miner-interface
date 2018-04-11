@@ -11,6 +11,7 @@ export class WebSocketService {
   constructor() { }
 
   connect(): Rx.Subject<MessageEvent>{
+
       this.socket = io('http://localhost:9011'); // Set connection on localhost port 80
 
       let observable = new Observable(observer => {
@@ -25,7 +26,6 @@ export class WebSocketService {
           this.socket.disconnect();
         }
       });
-    
 
     let observer = {
       // handle data when next() is invoked during data broadcast

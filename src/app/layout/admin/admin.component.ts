@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {animate, AUTO_STYLE, state, style, transition, trigger} from '@angular/animations';
 import {MenuItems} from '../../shared/menu-items/menu-items';
 import { ToastService } from '../../services/toast.service';
+import {EventService} from '../../services/event.service';
+import {TokenService} from '../../services/token.service';
+import {DataService} from '../../services/data.service';
 
 @Component({
   selector: 'app-admin',
@@ -127,27 +130,23 @@ export class AdminComponent implements OnInit {
   public toastStrong: string;
   public toastMessage: string;
 
-  constructor(public menuItems: MenuItems, public toastService: ToastService) {
-    // Subscribe to toast message visibility
-    this.toastService.isToastVisible.subscribe(visibility => {
-      this.isToastVisible = visibility;
-    });
+  // Notifications
+  notifications: Notification[];
 
-    // Subscribe to toast message class
-    this.toastService.toastClass.subscribe(clazz => {
-      this.toastClass = clazz;
-    });
+  // Token
+  token: string;
 
-    // Subscribe to toast message bolded text
-    this.toastService.toastStrong.subscribe(strongText => {
-      this.toastStrong = strongText;
-    });
+  // If miner is authenticated yet
+  isAuthenticated: boolean;
 
-    // Subscribe to toast message main message
-    this.toastService.toastMessage.subscribe(toastMessage => {
-      this.toastMessage = toastMessage;
-    });
+  // If unread notifications
+  unreadNotificationsExist = false;
 
+  constructor(public menuItems: MenuItems,
+              private eventService: EventService,
+              private toastService: ToastService,
+              private tokenService: TokenService,
+              private dataService: DataService) {
     // Setting view variables
     this.navType = 'st2';
     this.themeLayout = 'vertical';
@@ -201,6 +200,62 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Placeholder values
+    this.notifications = [];
+
+    // Subscribe to toast message visibility
+    this.toastService.isToastVisible.subscribe(visibility => {
+      this.isToastVisible = visibility;
+    });
+
+    // Subscribe to toast message class
+    this.toastService.toastClass.subscribe(clazz => {
+      this.toastClass = clazz;
+    });
+
+    // Subscribe to toast message bolded text
+    this.toastService.toastStrong.subscribe(strongText => {
+      this.toastStrong = strongText;
+    });
+
+    // Subscribe to toast message main message
+    this.toastService.toastMessage.subscribe(toastMessage => {
+      this.toastMessage = toastMessage;
+    });
+
+    // Subscribe to observable admin auth token
+    this.tokenService.adminAuthToken.subscribe(adminAuthToken => {
+      this.token = adminAuthToken;
+    });
+
+    // Subscribe to observable isAuthenticated
+    this.tokenService.isAuthenticated.subscribe(isAuthenticated => {
+      if (isAuthenticated) {
+        // Fetch the notifications since miner is authenticated
+        this.fetchNotifications();
+      }
+
+      // Update component's value of isAuthenticated
+      this.isAuthenticated = isAuthenticated;
+    });
+
+    // TODO: Make the dates display as human readable dates like "30 minutes ago" or "5 seconds ago" and recalculate everytime the drawer opens
+    // TODO: When notifications overflow let it say "see more" or just make the whole panel scrollable so it doesn't cutoff notifications
+    // Hook the admin component to event data that will yield notifications
+    this.eventService.eventData.subscribe(eventData => {
+      // If the event is a new notification perform correct action
+      if (eventData.event === 'newNotification') {
+
+        // Add notification to notifications array at front since
+        // array is already sorted and this is the freshest notification
+        this.notifications.unshift(eventData.notification);
+
+        // We have a new notification. Set boolean.
+        this.unreadNotificationsExist = true;
+
+      }
+    });
+
     this.setBackgroundPattern('pattern1');
     /*document.querySelector('body').classList.remove('dark');*/
   }
@@ -257,6 +312,9 @@ export class AdminComponent implements OnInit {
   }
 
   toggleLiveNotification() {
+    // Notifications have been read if bell is clicked
+    this.unreadNotificationsExist = false;
+
     this.liveNotification = this.liveNotification === 'an-off' ? 'an-animate' : 'an-off';
     this.liveNotificationClass = this.liveNotification === 'an-animate' ? 'active' : '';
 
@@ -406,4 +464,91 @@ export class AdminComponent implements OnInit {
     this.headerFixedMargin = this.isHeaderChecked === true ? '56px' : '';
   }
 
+  // Fetch the notifications from the miner and set the notifications array
+  fetchNotifications() {
+    // Fetch the notifications
+    this.dataService.getNotifications(this.token).subscribe((data) => {
+      // Extract the notifications array & set it to be the
+      // displayed notifications data
+      this.notifications = data.notifications;
+
+      // Sort the notifications by date
+      sortByDate(this.notifications);
+
+    });
+  }
+
+  // Delete a notification that has a specified ID
+  deleteNotification(targetId) {
+
+    this.dataService.deleteNotification(targetId, this.token).subscribe((result) => {
+      // Refetch notifications updated to update GUI
+      this.fetchNotifications();
+
+      // Toast
+      this.toastService.show('success', 'Success! Notification deleted.', '', 4);
+    });
+
+  }
+
+  // Delete a set of notifications that fall behind a epoch date
+  deleteNotifications(cutoffInHours) {
+    const cutoffInSeconds = hoursToSeconds(cutoffInHours);
+    const cutoffEpoch = nowAsEpoch() - cutoffInSeconds;
+
+    this.dataService.deleteNotifications(cutoffEpoch, this.token).subscribe((result) => {
+      // Refetch notifications updated to update GUI
+      this.fetchNotifications();
+
+      // Determine toast mainText
+      let mainText;
+      if (result.numDeleted === 1) {
+        mainText = '1 notification deleted from the queue.';
+      } else {
+        mainText = `${result.numDeleted} notifications deleted from the queue.`;
+      }
+
+      // Toast
+      this.toastService.show('success', 'Success!', mainText, 4);
+    });
+
+  }
+
+  epochToDateString(epoch) {
+    const date = new Date(epoch * 1000);
+    return date.toLocaleString();
+  }
+
+}
+
+// Converts a value in hours to seconds
+function hoursToSeconds(hours) {
+  return hours * 60 * 60; // hours -> minutes -> seconds
+}
+
+// Returns the current epoch time
+function nowAsEpoch() {
+  return Math.floor((new Date).getTime() / 1000);
+}
+
+function sortByDate(notifArray) {
+  notifArray.sort(compareNotificationsByDate);
+}
+
+function compareNotificationsByDate(a, b) {
+  if (a.dateCreated > b.dateCreated) {
+    return -1;
+  } else if (a.dateCreated < b.dateCreated) {
+    return 1;
+  }
+
+  return 0;
+}
+
+interface Notification {
+  id: string; // Random 8 byte hexadecimal ID
+  type: string; // Either "shard", "mainchain", or "general"
+  title: string; // The notification's title
+  message: string; // The notification's message
+  dateCreated: number; // Epoch date the notification was created
 }

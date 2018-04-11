@@ -10,7 +10,7 @@ export class EventService {
   eventData: Subject<any>;
 
   constructor(private wsService: WebSocketService) {
-    this.eventData = <Subject<any>>wsService 
+    this.eventData = <Subject<any>>wsService
       .connect()
       .map((response: any): any =>{
         return response;
